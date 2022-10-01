@@ -12,11 +12,11 @@ const SignUp = () => {
         </Grid>
         <div>
             <h1>Регистрация</h1>
-            <form>
+            
                 <input type="text"></input>
                 <input type="text"></input>
                 <button onClick={() => signUp("john@gmail.com", "john1234")}>Регистрация</button>
-            </form>
+           
         </div></>);
 }
 

@@ -1,38 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
-import SignUp from './components/SignUp';
-import SignIn from './components/SignIn';
-import SignOut from './components/SignOut';
-import SignUpModal from './components/SignUpModal'
-import TextFieldModal from './components/TextFieldModal';
-import Meals from './components/Meals';
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import Alcohol from "./components/alcohol/Alcohol";
+import SignIn from "./components/auth/SignIn";
+import Food from "./components/food/Food";
+import Glucose from "./components/glucose/Glucose";
+import SignUpModal from "./components/SignUpModal";
+import Steps from "./components/steps/Steps";
 
-const fun = () => console.log("Test")
-const test = () => console.log("Fun")
+const fun = () => console.log("Test");
+const test = () => console.log("Fun");
 
 function App() {
   return (
-    <div className="App">
-      <SignUp />
-      <SignUpModal title="Вход" message="Нет аккаунта?" messageButton="Регистрация" fun={fun} />
-      <Meals />
-      <SignIn />
-      <SignOut />
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/login" element={<SignIn />} />
+      <div className="App">
+        <SignUpModal
+          title="Вход"
+          message="Нет аккаунта?"
+          messageButton="Регистрация"
+          fun={fun}
+        />
+        <Alcohol />
+        <Glucose />
+        <Steps />
+        <Food />
+        <SignIn />
+      </div>
+    </Routes>
   );
 }
 
