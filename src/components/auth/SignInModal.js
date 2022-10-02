@@ -15,9 +15,9 @@ import InputLabel from "@mui/material/InputLabel";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
 import * as React from "react";
-import { useAuth } from "../../context/AuthProvider";
+import useAuth from "./useAuth";
+import useClient from "./useClient";
 
 const style = {
   position: "absolute",
@@ -33,12 +33,13 @@ const style = {
 };
 
 const SignInModal = () => {
-  const { setAuth } = useAuth();
+  const { setAuth, setUser } = useAuth();
+  const { account, teams } = useClient();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const api = `http://localhost:12012/login`;
+    /*const api = `http://localhost:12012/login`;
     const res = await axios.post(api, {
       username: values.username,
       password: values.password,
@@ -51,7 +52,34 @@ const SignInModal = () => {
 
     if (data) {
       console.log(data);
-    }
+    }*/
+
+    const promise = await account.createEmailSession(
+      values.username,
+      values.password
+    );
+
+    const promis = await teams.getMembership(
+      "6338c7b8bd54504d17cd",
+      "6338c8db960a983c8a5a"
+    );
+
+    const p = promis.roles;
+    /*  
+    const p = await teams.createMembership(
+      "6338c7b8bd54504d17cd",
+      "rose@gmail.com",
+      ["patient"],
+      "http://localhost:3000/welcome"
+    );*/
+
+    const pro = await teams.list();
+
+    const promi = await account.get();
+
+    setUser({ p });
+
+    console.log(p);
   };
 
   const [values, setValues] = React.useState({

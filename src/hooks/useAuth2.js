@@ -1,4 +1,4 @@
-import useClient from "./useClient";
+import useClient from "../components/auth/useClient";
 
 const useAuth = () => {
   const { account } = useClient();

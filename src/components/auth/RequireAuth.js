@@ -1,7 +1,15 @@
-import { useAuth } from "../../context/AuthProvider";
+import { Outlet } from "react-router-dom";
+import { useAuth } from "./AuthProvider";
+import SignIn from "./SignIn";
 
-const RequireAuth = () => {
-  const { auth } = useAuth();
+const RequireAuth = ({ roles }) => {
+  const { user } = useAuth();
+
+  return ["patient"].find((role) => roles?.includes(role)) ? (
+    <Outlet />
+  ) : (
+    <SignIn />
+  );
 };
 
 export default RequireAuth;

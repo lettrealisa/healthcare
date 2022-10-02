@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 export const AuthContext = createContext({});
 
@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [rememberMe, setRememberMe] = useState(
     JSON.parse(localStorage.getItem("rememberMe")) || false
   );
+  const [user, setUser] = useState({});
 
   return (
     <AuthContext.Provider
@@ -15,6 +16,8 @@ export const AuthProvider = ({ children }) => {
         setAuth,
         rememberMe,
         setRememberMe,
+        user,
+        setUser,
       }}
     >
       {children}
