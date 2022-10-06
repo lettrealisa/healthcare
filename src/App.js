@@ -3,8 +3,10 @@ import "./App.css";
 import Alcohol from "./components/alcohol/Alcohol";
 import RequireAuth from "./components/auth/RequireAuth";
 import SignIn from "./components/auth/SignIn";
+import Header from "./components/common/Header";
 import Food from "./components/food/Food";
 import Glucose from "./components/glucose/Glucose";
+import Profile from "./components/profile/Profile";
 import Steps from "./components/steps/Steps";
 
 function App() {
@@ -15,6 +17,7 @@ function App() {
         path="/"
         element={
           <>
+            <Header label="Healthcare" />
             <Alcohol />
             <Glucose />
             <Steps />
@@ -22,9 +25,10 @@ function App() {
           </>
         }
       ></Route>
-      <Route path="/" element={<RequireAuth roles={["patient"]} />}>
+      <Route path="/" element={<RequireAuth rolesList={["patient"]} />}>
         <Route path="/food" element={<Food />}></Route>
       </Route>
+      <Route path="/profile" element={<Profile />}></Route>
     </Routes>
   );
 }

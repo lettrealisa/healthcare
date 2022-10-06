@@ -100,16 +100,8 @@ const CreateFoodModal = ({ fun, title, message, messageButton }) => {
   const handleClose = () => setOpen(false);
 
   const [date, setDate] = React.useState(null);
-  const [desc, setDesc] = React.useState(null);
-  const [isFood, setIsFood] = React.useState(false);
   const [type, setType] = React.useState(null);
   const [value, setValue] = React.useState(null);
-
-  const hiddenFileInput = React.useRef();
-
-  const handleClick = (e) => {
-    hiddenFileInput.current.click();
-  };
 
   return (
     <div>

@@ -4,8 +4,8 @@ const useClient = () => {
   const client = new Client();
 
   client
-    .setEndpoint("http://ts205.antares-software.ru:8089/v1")
-    .setProject("632080ca1b895d0cb8f8");
+    .setEndpoint("http://ts205.antares-software.ru:8090/v1")
+    .setProject("633ebaf12e896af166d6");
 
   const account = new Account(client);
 
