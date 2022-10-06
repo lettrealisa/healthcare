@@ -1,4 +1,4 @@
-import { Account, Client, Teams } from "appwrite";
+import { Account, Client, Databases, Teams } from "appwrite";
 
 const useClient = () => {
   const client = new Client();
@@ -11,7 +11,9 @@ const useClient = () => {
 
   const teams = new Teams(client);
 
-  return { client, account, teams };
+  const databases = new Databases(client, "633f24764b9416fbd058");
+
+  return { client, account, teams, databases };
 };
 
 export default useClient;

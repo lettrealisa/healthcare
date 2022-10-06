@@ -1,15 +1,12 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Grid, LinearProgress, Switch } from "@mui/material";
+import { Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { pink } from "@mui/material/colors";
 import FormControl from "@mui/material/FormControl";
-import InputBase from "@mui/material/InputBase";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Select from "@mui/material/Select";
-import { alpha, styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
@@ -27,81 +24,15 @@ const style = {
   borderRadius: "10px",
 };
 
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
-  "label + &": {
-    marginTop: theme.spacing(3),
-  },
-  "& .MuiInputBase-input": {
-    borderRadius: 4,
-    position: "relative",
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid #ced4da",
-    fontSize: 16,
-    padding: "10px 26px 10px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-    "&:focus": {
-      borderRadius: 4,
-      borderColor: "#80bdff",
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-    },
-  },
-}));
-
-const GreenSwitch = styled(Switch)(({ theme }) => ({
-  "& .MuiSwitch-switchBase.Mui-checked": {
-    color: pink[600],
-    "&:hover": {
-      backgroundColor: alpha(pink[600], theme.palette.action.hoverOpacity),
-    },
-  },
-  "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-    backgroundColor: pink[600],
-  },
-}));
-
-const ProgressBar = styled(LinearProgress)(() => ({
-  "& .MuiLinearProgress-colorPrimary": {
-    backgroundColor: pink[600],
-  },
-  "& .MuiLinearProgress-barColorPrimary": {
-    backgroundColor: pink[600],
-  },
-  "& .MuiLinearProgress-root": {
-    backgroundColor: pink[600],
-  },
-}));
-
-const ColorButton = styled(Button)(({ theme }) => ({
-  /*color: theme.palette.getContrastText(purple[500]),*/
-  border: `1px solid ${pink[600]}`,
-  color: pink[600],
-  "&:hover": {
-    border: `1px solid ${pink[600]}`,
-    background: pink[50],
-  },
-}));
-
-const CreateFoodModal = ({ fun, title, message, messageButton }) => {
+const CreateFoodModal = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const [date, setDate] = React.useState(null);
-  const [type, setType] = React.useState(null);
+  const [volume, setVolume] = React.useState(null);
   const [value, setValue] = React.useState(null);
+  const [name, setName] = React.useState(null);
 
   return (
     <div>
@@ -159,8 +90,8 @@ const CreateFoodModal = ({ fun, title, message, messageButton }) => {
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
                   label="Объём"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  value={volume}
+                  onChange={(e) => setVolume(e.target.value)}
                 >
                   <MenuItem value="">
                     <em>-</em>
@@ -175,8 +106,8 @@ const CreateFoodModal = ({ fun, title, message, messageButton }) => {
                   id="outlined-basic"
                   label="Наименование"
                   variant="outlined"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
             </Grid>
