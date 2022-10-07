@@ -50,13 +50,6 @@ const SignIn = () => {
       setMembers(await teams.getMemberships(role.$id));
     });
 
-    /*const user = await account.get();
-    setUser(user);
-
-    if (rememberMe) {
-      localStorage.setItem("roles", roles);
-      localStorage.setItem("user", user);
-    }*/
     console.log(members);
   };
 

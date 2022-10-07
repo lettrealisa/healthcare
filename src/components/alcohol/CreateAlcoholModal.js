@@ -1,7 +1,6 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Grid } from "@mui/material";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -10,6 +9,9 @@ import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useState } from "react";
+import useClient from "../auth/useClient";
+import CustomButton from "../common/CustomButton";
 
 const style = {
   position: "absolute",
@@ -25,14 +27,40 @@ const style = {
 };
 
 const CreateFoodModal = () => {
+  const collectionId = "633f248cc4c8e69b367d";
+
+  const { databases } = useClient();
+
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [date, setDate] = React.useState(null);
-  const [volume, setVolume] = React.useState(null);
-  const [value, setValue] = React.useState(null);
-  const [name, setName] = React.useState(null);
+  const [values, setValues] = useState({
+    date: new Date(),
+    name: "",
+    volume: "",
+    value: null,
+  });
+
+  const handleChange = (prop) => (event) => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
+
+  const handleCreate = async () => {
+    const p = await databases.createDocument(
+      collectionId,
+      "unique()",
+      {
+        date: values.date,
+        name: values.name,
+        volume: values.volume,
+        value: values.value,
+      },
+      ["team:633ec2096fd71254f634/doctor"],
+      ["team:633ec2096fd71254f634/patient"]
+    );
+    console.log(p);
+  };
 
   return (
     <div>
@@ -63,8 +91,8 @@ const CreateFoodModal = () => {
                   id="demo-customized-textbox"
                   variant="outlined"
                   type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  value={values.date}
+                  onChange={handleChange("date")}
                 />
               </FormControl>
             </Grid>
@@ -75,8 +103,8 @@ const CreateFoodModal = () => {
                   id="outlined-basic"
                   label="Значение"
                   variant="outlined"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
+                  value={values.value}
+                  onChange={handleChange("value")}
                 />
               </FormControl>
             </Grid>
@@ -90,8 +118,8 @@ const CreateFoodModal = () => {
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
                   label="Объём"
-                  value={volume}
-                  onChange={(e) => setVolume(e.target.value)}
+                  value={values.volume}
+                  onChange={handleChange("volume")}
                 >
                   <MenuItem value="">
                     <em>-</em>
@@ -106,20 +134,14 @@ const CreateFoodModal = () => {
                   id="outlined-basic"
                   label="Наименование"
                   variant="outlined"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={values.name}
+                  onChange={handleChange("name")}
                 />
               </FormControl>
             </Grid>
           </Grid>
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <Button
-              variant="contained"
-              sx={{ width: "100%" }}
-              className="bg-primary"
-            >
-              Добавить
-            </Button>
+            <CustomButton label="Добавить" onClick={handleCreate} />
           </Box>
         </Box>
       </Modal>

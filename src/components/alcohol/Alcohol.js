@@ -4,21 +4,27 @@ import useClient from "../auth/useClient";
 import CreateAlcoholModal from "./CreateAlcoholModal";
 
 const Alcohol = () => {
-  const [items, setItems] = useState([
-    { name: "aaaaaaaaa" },
-    { name: "baaaaaaaaaaaaa" },
-    { name: "caaaaaaaaaaaa" },
-    { name: "daaaaaaaaaa" },
-    { name: "eaaaaaa" },
-  ]);
-  const { databases, account } = useClient();
+  const collectionId = "633f248cc4c8e69b367d";
+
+  const [items, setItems] = useState([]);
+
+  const [values, setValues] = useState({
+    date: Date.now(),
+    name: "",
+    volume: "",
+    value: null,
+  });
+
+  const { databases } = useClient();
 
   useEffect(() => {
     const getDocuments = async () => {
-      //setItems(await databases.listDocuments("633f248cc4c8e69b367d"));
+      setItems(await databases.listDocuments(collectionId));
+      console.log(await databases.listDocuments(collectionId));
     };
     getDocuments();
   }, [items]);
+
   return (
     <>
       <h1>Алкоголь</h1>
@@ -27,7 +33,7 @@ const Alcohol = () => {
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
-        {items?.map((item) => (
+        {items?.documents?.map((item) => (
           <Grid item xs={2} sm={4} md={4}>
             {item.name}
           </Grid>

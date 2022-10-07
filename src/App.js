@@ -18,7 +18,6 @@ function App() {
         element={
           <>
             <Header label="Healthcare" />
-            <Alcohol />
             <Glucose />
             <Steps />
             <Food />
@@ -29,6 +28,7 @@ function App() {
         <Route path="/food" element={<Food />}></Route>
       </Route>
       <Route path="/profile" element={<Profile />}></Route>
+      <Route path="/alcohol" element={<Alcohol />}></Route>
     </Routes>
   );
 }
