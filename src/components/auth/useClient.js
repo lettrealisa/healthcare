@@ -11,7 +11,7 @@ const useClient = () => {
 
   const teams = new Teams(client);
 
-  const databases = new Databases(client, "633f24764b9416fbd058");
+  const databases = new Databases(client);
 
   return { client, account, teams, databases };
 };

@@ -1,5 +1,5 @@
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Grid } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import { Grid, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -8,6 +8,7 @@ import Modal from "@mui/material/Modal";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { Query } from "appwrite";
 import { useState } from "react";
 import useClient from "../auth/useClient";
 import CustomButton from "../common/CustomButton";
@@ -25,7 +26,7 @@ const style = {
   borderRadius: "10px",
 };
 
-const CreateAlcoholModal = ({ items, setItems }) => {
+const UpdateAlcoholModal = ({ item, items, setItems }) => {
   const collectionId = "633f248cc4c8e69b367d";
 
   const { databases } = useClient();
@@ -38,18 +39,18 @@ const CreateAlcoholModal = ({ items, setItems }) => {
     date: new Date(),
     name: "",
     volume: "",
-    value: null,
+    value: 0,
   });
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  const handleCreate = async () => {
-    const p = await databases.createDocument(
+  const handleUpdate = async () => {
+    await databases.updateDocument(
       "633f24764b9416fbd058",
       collectionId,
-      "unique()",
+      item.$id,
       {
         date: values.date,
         name: values.name,
@@ -60,7 +61,26 @@ const CreateAlcoholModal = ({ items, setItems }) => {
 
     const getDocuments = async () => {
       setItems(
-        await databases.listDocuments("633f24764b9416fbd058", collectionId)
+        await databases.listDocuments("633f24764b9416fbd058", collectionId, [
+          Query.orderAsc("date"),
+        ])
+      );
+    };
+    getDocuments();
+  };
+
+  const handleDelete = async () => {
+    await databases.deleteDocument(
+      "633f24764b9416fbd058",
+      collectionId,
+      item.$id
+    );
+
+    const getDocuments = async () => {
+      setItems(
+        await databases.listDocuments("633f24764b9416fbd058", collectionId, [
+          Query.orderAsc("date"),
+        ])
       );
     };
     getDocuments();
@@ -69,11 +89,12 @@ const CreateAlcoholModal = ({ items, setItems }) => {
   return (
     <div>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <AddCircleIcon
-          className="addCircleIcon"
-          sx={{ transform: "scale(1.3)", marginTop: "0.5rem" }}
-          onClick={handleOpen}
-        />
+        <IconButton onClick={handleOpen}>
+          <Edit />
+        </IconButton>
+        <IconButton onClick={handleDelete}>
+          <Delete />
+        </IconButton>
       </Box>
       <Modal
         open={open}
@@ -95,7 +116,15 @@ const CreateAlcoholModal = ({ items, setItems }) => {
                   id="demo-customized-textbox"
                   variant="outlined"
                   type="date"
+                  defaultValue={
+                    ("0" + new Date(item.date).getDate()).slice(-2) +
+                    "." +
+                    ("0" + (new Date(item.date).getMonth() + 1)).slice(-2) +
+                    "." +
+                    new Date(item.date).getFullYear()
+                  }
                   value={values.date}
+                  label=""
                   onChange={handleChange("date")}
                 />
               </FormControl>
@@ -108,6 +137,7 @@ const CreateAlcoholModal = ({ items, setItems }) => {
                   label="Значение"
                   variant="outlined"
                   value={values.value}
+                  defaultValue={item.value}
                   onChange={handleChange("value")}
                 />
               </FormControl>
@@ -123,12 +153,10 @@ const CreateAlcoholModal = ({ items, setItems }) => {
                   id="demo-simple-select-helper"
                   label="Объём"
                   value={values.volume}
+                  defaultValue={item.volume}
                   onChange={handleChange("volume")}
                 >
-                  <MenuItem value="">
-                    <em>-</em>
-                  </MenuItem>
-                  <MenuItem value={"test"}>Тест</MenuItem>
+                  <MenuItem value={item.volume}>{item.volume}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -138,6 +166,7 @@ const CreateAlcoholModal = ({ items, setItems }) => {
                   id="outlined-basic"
                   label="Наименование"
                   variant="outlined"
+                  defaultValue={item.name}
                   value={values.name}
                   onChange={handleChange("name")}
                 />
@@ -145,7 +174,7 @@ const CreateAlcoholModal = ({ items, setItems }) => {
             </Grid>
           </Grid>
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <CustomButton label="Добавить" onClick={handleCreate} />
+            <CustomButton label="Изменить" onClick={handleUpdate} />
           </Box>
         </Box>
       </Modal>
@@ -153,4 +182,4 @@ const CreateAlcoholModal = ({ items, setItems }) => {
   );
 };
 
-export default CreateAlcoholModal;
+export default UpdateAlcoholModal;

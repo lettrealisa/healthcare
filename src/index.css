@@ -3,7 +3,7 @@
 :root {
   --primary: #8bc34a;
   --secondary: #d81b60;
-  --soft: #708090;
+  --neutral: #dee2e3;
 }
 
 *,
@@ -18,6 +18,19 @@ body {
   font-size: 16px;
   /*display: flex;
   justify-content: center;*/
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card {
+  border-radius: 10px;
+  background-color: var(--neutral);
 }
 
 .modal {
@@ -76,6 +89,7 @@ button {
 
 .addCircleIcon {
   fill: var(--primary) !important;
+  transform: scale(1.5) !important;
 }
 
 h1 {

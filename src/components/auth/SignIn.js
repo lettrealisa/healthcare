@@ -47,7 +47,7 @@ const SignIn = () => {
     const roles = await teams.list();
 
     roles.teams.forEach(async (role) => {
-      setMembers(await teams.getMemberships(role.$id));
+      setMembers(await teams.listMemberships(role.$id));
     });
 
     console.log(members);
