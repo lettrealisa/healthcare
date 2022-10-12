@@ -20,14 +20,6 @@ body {
   justify-content: center;*/
 }
 
-.container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
 .card {
   border-radius: 10px;
   background-color: var(--neutral);

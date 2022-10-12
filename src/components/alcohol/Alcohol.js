@@ -6,6 +6,7 @@ import {
   CardHeader,
   Container,
   Grid,
+  Pagination,
   Typography,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -32,19 +33,33 @@ const Alcohol = () => {
 
   const { client, databases } = useClient();
 
+  const [page, setPage] = useState(1);
+  const handlePage = (e, value) => {
+    setPage(value);
+  };
+
+  const [limit, setLimit] = useState(9);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    setOffset((page - 1) * limit);
+  }, [page]);
+
   useEffect(() => {
     const getDocuments = async () => {
-      setItems(
-        await databases.listDocuments("633f24764b9416fbd058", collectionId, [
-          Query.orderAsc("date"),
-        ])
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        collectionId,
+        [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
+      setItems(res);
+
       client.subscribe(["documents", "files"], (response) => {
         console.log(response);
       });
     };
     getDocuments();
-  }, []);
+  }, [limit, offset]);
 
   const handleUpdate = async (id) => {
     await databases.updateDocument("633f24764b9416fbd058", collectionId, id);
@@ -96,6 +111,13 @@ const Alcohol = () => {
               ))}
             </Grid>
           </Box>
+          <Pagination
+            count={Math.ceil(items?.total / limit)}
+            page={page}
+            onChange={handlePage}
+            size="large"
+            sx={{ display: "flex", justifyContent: "center" }}
+          />
           <Box sx={{ alignSelf: "center" }}>
             <CreateAlcoholModal items={items} setItems={setItems} />
           </Box>
