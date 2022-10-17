@@ -26,7 +26,7 @@ const style = {
   borderRadius: "10px",
 };
 
-const UpdateAlcoholModal = ({ item, items, setItems }) => {
+const UpdateFoodModal = ({ item, items, setItems }) => {
   const collectionId = "633f248cc4c8e69b367d";
 
   const { databases } = useClient();
@@ -177,4 +177,4 @@ const UpdateAlcoholModal = ({ item, items, setItems }) => {
   );
 };
 
-export default UpdateAlcoholModal;
+export default UpdateFoodModal;

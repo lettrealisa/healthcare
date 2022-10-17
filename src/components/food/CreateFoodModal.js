@@ -1,5 +1,12 @@
+import { PhotoCamera } from "@mui/icons-material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { FormControlLabel, FormGroup, Grid, Switch } from "@mui/material";
+import {
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  Input,
+  Switch,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { pink } from "@mui/material/colors";
@@ -11,8 +18,18 @@ import Select from "@mui/material/Select";
 import { alpha, styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
-import LoadFoodPicModal from "./LoadFoodPicModal";
+import { useCallback, useEffect, useRef, useState } from "react";
+import useClient from "../auth/useClient";
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  /*color: theme.palette.getContrastText(purple[500]),*/
+  border: `1px solid ${pink[600]}`,
+  color: pink[600],
+  "&:hover": {
+    border: `1px solid ${pink[600]}`,
+    background: pink[50],
+  },
+}));
 
 const GreenSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
@@ -27,19 +44,61 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const CreateFoodModal = ({ title }) => {
-  const [open, setOpen] = React.useState(false);
+  const collectionId = "633f248cc4c8e69b367d";
+
+  const [images, setImages] = useState([]);
+
+  const { databases, storage } = useClient();
+
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [date, setDate] = React.useState(null);
-  const [desc, setDesc] = React.useState(null);
-  const [isFood, setIsFood] = React.useState(false);
-  const [type, setType] = React.useState(null);
-  const [value, setValue] = React.useState(null);
+  const [values, setValues] = useState({
+    date: "",
+    desc: "",
+    isFood: false,
+    type: "",
+    value: "",
+    image: "",
+  });
 
-  const [modalHeight, setModalHeight] = React.useState(0);
+  const handleChange = (prop) => (event) => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
 
-  const ref = React.useCallback((node) => {
+  const handleCreate = async () => {
+    await databases.updateDocument(
+      "633f24764b9416fbd058",
+      collectionId,
+      "unique()",
+      {
+        date: values.date,
+        desc: values.desc,
+        isFood: values.isFood,
+        type: values.type,
+        value: values.value,
+        image: values.image,
+      }
+    );
+  };
+  const hiddenFileInput = useRef();
+
+  const handleClick = (e) => {
+    hiddenFileInput.current.click();
+  };
+
+  useEffect(() => {
+    const getImages = async () => {
+      const res = await storage.listFiles("634db50ac1ab6fd9b602");
+      setImages(res.files);
+    };
+    getImages();
+  }, []);
+
+  const [modalHeight, setModalHeight] = useState(0);
+
+  const ref = useCallback((node) => {
     setModalHeight(node?.clientHeight);
   }, []);
 
@@ -72,8 +131,8 @@ const CreateFoodModal = ({ title }) => {
                   id="demo-customized-textbox"
                   variant="outlined"
                   type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  value={values.date}
+                  onChange={handleChange("date")}
                 />
               </FormControl>
             </Grid>
@@ -84,8 +143,8 @@ const CreateFoodModal = ({ title }) => {
                   label="Описание"
                   multiline
                   rows={4}
-                  value={desc}
-                  onChange={(e) => setDesc(e.target.value)}
+                  value={values.desc}
+                  onChange={handleChange("desc")}
                 />
               </FormControl>
             </Grid>
@@ -96,8 +155,8 @@ const CreateFoodModal = ({ title }) => {
                   control={
                     <GreenSwitch
                       defaultChecked
-                      value={isFood}
-                      onChange={(e) => setIsFood(e.target.value)}
+                      value={values.isFood}
+                      onChange={handleChange("isFood")}
                     />
                   }
                   label="Блюдо"
@@ -115,8 +174,8 @@ const CreateFoodModal = ({ title }) => {
                   id="demo-simple-select-helper"
                   label="Тип"
                   fullWidth
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  value={values.type}
+                  onChange={handleChange("type")}
                 >
                   <MenuItem value="">
                     <em>-</em>
@@ -126,29 +185,31 @@ const CreateFoodModal = ({ title }) => {
               </FormControl>
             </Grid>
             <Grid item xs="12">
-              <FormControl variant="standard" fullWidth>
-                <TextField
-                  id="outlined-basic"
-                  label="Значение"
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                marginTop="1rem"
+              >
+                <ColorButton
+                  onClick={handleClick}
+                  component="label"
                   variant="outlined"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                />
-              </FormControl>
+                >
+                  Выбрать фото
+                  <Input
+                    id="input"
+                    type="file"
+                    sx={{ display: "none" }}
+                    ref={hiddenFileInput}
+                  />
+                  <PhotoCamera sx={{ marginLeft: "0.3rem" }} />
+                </ColorButton>
+                <Button variant="contained" className="bg-primary">
+                  Добавить
+                </Button>
+              </Box>
             </Grid>
           </Grid>
-          <Box sx={{ display: "flex", justifyContent: "end" }}>
-            <LoadFoodPicModal modalHeight={modalHeight} />
-          </Box>
-          <Box sx={{ display: "none", justifyContent: "center" }}>
-            <Button
-              variant="contained"
-              sx={{ mt: 2, width: "100%" }}
-              className="bg-primary"
-            >
-              Добавить
-            </Button>
-          </Box>
         </Box>
       </Modal>
     </div>

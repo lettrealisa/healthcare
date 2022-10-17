@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Alcohol from "./components/alcohol/Alcohol";
-import RequireAuth from "./components/auth/RequireAuth";
+import Alcohol from "./components/alcohol/Alcohol.js";
 import SignIn from "./components/auth/SignIn";
 import Header from "./components/common/Header";
 import Food from "./components/food/Food";
@@ -24,9 +23,7 @@ function App() {
           </>
         }
       ></Route>
-      <Route path="/" element={<RequireAuth rolesList={["patient"]} />}>
-        <Route path="/food" element={<Food />}></Route>
-      </Route>
+      <Route path="/food" element={<Food />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
       <Route path="/alcohol" element={<Alcohol />}></Route>
     </Routes>
