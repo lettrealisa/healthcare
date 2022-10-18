@@ -129,7 +129,11 @@ const Food = () => {
             sx={{ display: "flex", justifyContent: "center" }}
           />
           <Box sx={{ alignSelf: "center" }}>
-            <CreateFoodModal items={items} setItems={setItems} />
+            <CreateFoodModal
+              items={items}
+              setItems={setItems}
+              imageList={images}
+            />
           </Box>
         </Box>
       </Container>

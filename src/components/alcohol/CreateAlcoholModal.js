@@ -8,7 +8,7 @@ import Modal from "@mui/material/Modal";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useClient from "../auth/useClient";
 import CustomButton from "../common/CustomButton";
 
@@ -33,6 +33,19 @@ const CreateAlcoholModal = ({ items, setItems }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [volumes, setVolumes] = useState([]);
+
+  useEffect(() => {
+    const getDocuments = async () => {
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        "634dee358db7f7944638"
+      );
+      setVolumes(res);
+    };
+    getDocuments();
+  }, []);
 
   const [values, setValues] = useState({
     date: new Date(),
@@ -128,7 +141,9 @@ const CreateAlcoholModal = ({ items, setItems }) => {
                   <MenuItem value="">
                     <em>-</em>
                   </MenuItem>
-                  <MenuItem value={"test"}>Тест</MenuItem>
+                  {volumes?.documents?.map((volume) => (
+                    <MenuItem value={volume.name}>{volume.name}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>

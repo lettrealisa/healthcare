@@ -79,6 +79,10 @@ button {
   background-color: var(--primary) !important;
 }
 
+.bg-secondary {
+  background-color: var(--secondary) !important;
+}
+
 .addCircleIcon {
   fill: var(--primary) !important;
   transform: scale(1.5) !important;

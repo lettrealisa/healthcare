@@ -18,16 +18,25 @@ import Select from "@mui/material/Select";
 import { alpha, styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import "dayjs/locale/ru";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useClient from "../auth/useClient";
 
 const ColorButton = styled(Button)(({ theme }) => ({
-  /*color: theme.palette.getContrastText(purple[500]),*/
   border: `1px solid ${pink[600]}`,
-  color: pink[600],
+  background: pink[600],
+  color: "#fff",
   "&:hover": {
     border: `1px solid ${pink[600]}`,
-    background: pink[50],
+    background: "#fff",
+    color: pink[600],
+  },
+  "&:disabled": {
+    border: `1px solid ${pink[300]}`,
+    background: pink[300],
   },
 }));
 
@@ -43,8 +52,10 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const CreateFoodModal = ({ title }) => {
-  const collectionId = "633f248cc4c8e69b367d";
+const CreateFoodModal = ({ title, imageList }) => {
+  const collectionId = "634db3dbd47db0cad25b";
+
+  const [locale, setLocale] = useState("ru");
 
   const [images, setImages] = useState([]);
 
@@ -54,13 +65,26 @@ const CreateFoodModal = ({ title }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const getDocuments = async () => {
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        "634dedc1c1782cef9a5f"
+      );
+      setCategories(res);
+    };
+    getDocuments();
+  }, []);
+
   const [values, setValues] = useState({
-    date: "",
+    date: new Date(),
     desc: "",
     isFood: false,
     type: "",
     value: "",
-    image: "",
+    image: imageList?.slice(-1)[0]?.$id,
   });
 
   const handleChange = (prop) => (event) => {
@@ -68,7 +92,7 @@ const CreateFoodModal = ({ title }) => {
   };
 
   const handleCreate = async () => {
-    await databases.updateDocument(
+    await databases.createDocument(
       "633f24764b9416fbd058",
       collectionId,
       "unique()",
@@ -84,8 +108,12 @@ const CreateFoodModal = ({ title }) => {
   };
   const hiddenFileInput = useRef();
 
-  const handleClick = (e) => {
-    hiddenFileInput.current.click();
+  const handleClick = () => {
+    storage.createFile(
+      "634db50ac1ab6fd9b602",
+      "unique()",
+      document.getElementById("input").files[0]
+    );
   };
 
   useEffect(() => {
@@ -127,13 +155,16 @@ const CreateFoodModal = ({ title }) => {
           <Grid container spacing={1}>
             <Grid item xs="12">
               <FormControl variant="standard" fullWidth>
-                <TextField
-                  id="demo-customized-textbox"
-                  variant="outlined"
-                  type="date"
-                  value={values.date}
-                  onChange={handleChange("date")}
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={locale}
+                >
+                  <DateTimePicker
+                    value={values.date}
+                    onChange={handleChange("date")}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
               </FormControl>
             </Grid>
             <Grid item xs="12">
@@ -148,7 +179,6 @@ const CreateFoodModal = ({ title }) => {
                 />
               </FormControl>
             </Grid>
-
             <Grid item xs="12">
               <FormGroup>
                 <FormControlLabel
@@ -163,7 +193,6 @@ const CreateFoodModal = ({ title }) => {
                 />
               </FormGroup>
             </Grid>
-
             <Grid item xs="12">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-helper-label">
@@ -180,8 +209,22 @@ const CreateFoodModal = ({ title }) => {
                   <MenuItem value="">
                     <em>-</em>
                   </MenuItem>
-                  <MenuItem value={"test"}>Тест</MenuItem>
+                  {categories?.documents?.map((category) => (
+                    <MenuItem value={category.name}>{category.name}</MenuItem>
+                  ))}
                 </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs="12">
+              <FormControl variant="standard" fullWidth>
+                <TextField
+                  id="outlined-basic"
+                  label="Значение"
+                  variant="outlined"
+                  value={values.value}
+                  onChange={handleChange("value")}
+                />
               </FormControl>
             </Grid>
             <Grid item xs="12">
@@ -190,23 +233,24 @@ const CreateFoodModal = ({ title }) => {
                 justifyContent="space-between"
                 marginTop="1rem"
               >
-                <ColorButton
-                  onClick={handleClick}
-                  component="label"
-                  variant="outlined"
-                >
+                <ColorButton component="label" variant="outlined">
                   Выбрать фото
                   <Input
                     id="input"
                     type="file"
                     sx={{ display: "none" }}
                     ref={hiddenFileInput}
+                    onChange={handleClick}
                   />
                   <PhotoCamera sx={{ marginLeft: "0.3rem" }} />
                 </ColorButton>
-                <Button variant="contained" className="bg-primary">
+                <ColorButton
+                  variant="contained"
+                  onClick={handleCreate}
+                  disabled={1 === 2}
+                >
                   Добавить
-                </Button>
+                </ColorButton>
               </Box>
             </Grid>
           </Grid>
