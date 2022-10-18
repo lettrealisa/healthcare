@@ -17,13 +17,25 @@ import Modal from "@mui/material/Modal";
 import Select from "@mui/material/Select";
 import { alpha, styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import "dayjs/locale/ru";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useClient from "../auth/useClient";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "none",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: "10px",
+};
 
 const ColorButton = styled(Button)(({ theme }) => ({
   border: `1px solid ${pink[600]}`,
@@ -167,13 +179,7 @@ const CreateFoodModal = ({ title, imageList, volumes }) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box ref={ref} className="modal">
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              {imageList?.slice(-1)[0]?.$id}
-            </Typography>
-          </Box>
-
+        <Box ref={ref} sx={style}>
           <Grid container spacing={1}>
             <Grid item xs="12">
               <FormControl variant="standard" fullWidth>

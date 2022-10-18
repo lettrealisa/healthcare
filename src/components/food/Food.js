@@ -1,3 +1,5 @@
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 import {
   Box,
   Card,
@@ -11,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { experimentalStyled as styled } from "@mui/material/styles";
+import { experimentalStyled as styled, useTheme } from "@mui/material/styles";
 import { Query } from "appwrite";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -29,6 +31,9 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const Food = () => {
   const collectionId = "634db3dbd47db0cad25b";
+
+  const theme = useTheme();
+  //const colorMode = useContext(ColorModeContext);
 
   const [items, setItems] = useState([]);
   const [images, setImages] = useState([]);
@@ -83,8 +88,17 @@ const Food = () => {
     <>
       <Container>
         <Box display="grid" gridTemplateRows="100px 1fr 100px">
-          <Box sx={{ alignSelf: "center" }}>
-            <h1 sx={{ margin: 0 }}>Дневник питания</h1>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <h1>Дневник питания</h1>
+            {theme.palette.mode === "dark" ? (
+              <Brightness7Icon />
+            ) : (
+              <Brightness4Icon />
+            )}
           </Box>
 
           <Box sx={{ flexGrow: 1 }}>
@@ -95,25 +109,38 @@ const Food = () => {
             >
               {items?.documents?.map((item) => (
                 <Grid item xs={2} sm={4} md={4} key={item.$id}>
-                  <Card>
+                  <Card sx={{ maxWidth: 345 }}>
                     <CardHeader
                       title={
-                        ("0" + new Date(item.date).getDate()).slice(-2) +
-                        "." +
-                        ("0" + (new Date(item.date).getMonth() + 1)).slice(-2) +
-                        "." +
-                        new Date(item.date).getFullYear()
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography>
+                            {("0" + new Date(item.date).getDate()).slice(-2) +
+                              "." +
+                              (
+                                "0" +
+                                (new Date(item.date).getMonth() + 1)
+                              ).slice(-2) +
+                              "." +
+                              new Date(item.date).getFullYear()}
+                          </Typography>
+                          <Typography>
+                            {new Date(item.date).getHours() +
+                              ":" +
+                              new Date(item.date).getMinutes()}
+                          </Typography>
+                        </Box>
                       }
                     ></CardHeader>
                     <CardMedia
                       component="img"
+                      height="194"
                       image={storage.getFilePreview(
                         "634db50ac1ab6fd9b602",
                         item.image
                       )}
                     />
                     <CardContent>
-                      <Typography>{item.name}</Typography>
+                      <Typography>{item.desc}</Typography>
                       <Typography>
                         {item.value}
                         &nbsp;

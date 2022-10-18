@@ -1,17 +1,17 @@
 import { Delete, Edit } from "@mui/icons-material";
-import { Grid, IconButton } from "@mui/material";
+import { Button, Grid, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
+import { pink } from "@mui/material/colors";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Select from "@mui/material/Select";
+import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import { Query } from "appwrite";
 import { useState } from "react";
 import useClient from "../auth/useClient";
-import CustomButton from "../common/CustomButton";
 
 const style = {
   position: "absolute",
@@ -25,6 +25,22 @@ const style = {
   p: 4,
   borderRadius: "10px",
 };
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  border: `1px solid ${pink[600]}`,
+  background: pink[600],
+  color: "#fff",
+  "&:hover": {
+    border: `1px solid ${pink[600]}`,
+    background: "#fff",
+    color: pink[600],
+  },
+  "&:disabled": {
+    border: `1px solid ${pink[300]}`,
+    background: pink[300],
+    color: pink[50],
+  },
+}));
 
 const UpdateFoodModal = ({ item, items, setItems }) => {
   const collectionId = "633f248cc4c8e69b367d";
@@ -42,7 +58,7 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
       ("0" + (new Date(item.date).getMonth() + 1)).slice(-2) +
       "." +
       new Date(item.date).getFullYear(),
-    name: item.name,
+    desc: item.desc,
     volume: item.volume,
     value: item.value,
   });
@@ -58,7 +74,7 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
       item.$id,
       {
         date: values.date,
-        name: values.name,
+        desc: values.desc,
         volume: values.volume,
         value: values.value,
       }
@@ -108,12 +124,6 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Box sx={{ display: "flex", marginBottom: "1rem" }}>
-            <Typography id="modal-modal-title">
-              <h2>Дневник питания</h2>
-            </Typography>
-          </Box>
-
           <Grid container spacing={1}>
             <Grid item xs="12">
               <FormControl variant="standard" fullWidth>
@@ -127,7 +137,6 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
                 />
               </FormControl>
             </Grid>
-
             <Grid item xs="12">
               <FormControl variant="standard" fullWidth>
                 <TextField
@@ -139,7 +148,6 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
                 />
               </FormControl>
             </Grid>
-
             <Grid item xs="12">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-helper-label">
@@ -162,15 +170,19 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
                   id="outlined-basic"
                   label="Наименование"
                   variant="outlined"
-                  value={values.name}
-                  onChange={handleChange("name")}
+                  value={values.desc}
+                  onChange={handleChange("desc")}
                 />
               </FormControl>
             </Grid>
+            <Grid item xs="12" sx={{ marginTop: "1rem" }}>
+              <FormControl fullWidth>
+                <ColorButton variant="contained" onClick={handleUpdate}>
+                  Изменить
+                </ColorButton>
+              </FormControl>
+            </Grid>
           </Grid>
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <CustomButton label="Изменить" onClick={handleUpdate} />
-          </Box>
         </Box>
       </Modal>
     </div>
