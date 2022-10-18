@@ -20,6 +20,7 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { Query } from "appwrite";
 import "dayjs/locale/ru";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useClient from "../auth/useClient";
@@ -65,7 +66,7 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const CreateFoodModal = ({ title, imageList, volumes }) => {
+const CreateFoodModal = ({ title, imageList, volumes, setItems }) => {
   const collectionId = "634db3dbd47db0cad25b";
 
   const [locale, setLocale] = useState("ru");
@@ -115,6 +116,7 @@ const CreateFoodModal = ({ title, imageList, volumes }) => {
     isFood: true,
     type: "",
     value: "",
+    volume: "",
     image: images?.slice(-1)[0]?.$id,
   });
 
@@ -133,11 +135,21 @@ const CreateFoodModal = ({ title, imageList, volumes }) => {
         isFood: isFood,
         type: values.type,
         value: values.value,
+        volume: values.volume,
         image: images?.slice(-1)[0]?.$id,
       }
     );
 
     isLoaded(false);
+
+    const getDocuments = async () => {
+      setItems(
+        await databases.listDocuments("633f24764b9416fbd058", collectionId, [
+          Query.orderAsc("date"),
+        ])
+      );
+    };
+    getDocuments();
   };
   const hiddenFileInput = useRef();
 

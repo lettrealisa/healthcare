@@ -46,7 +46,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 }));
 
 const UpdateFoodModal = ({ item, items, setItems }) => {
-  const collectionId = "633f248cc4c8e69b367d";
+  const collectionId = "634db3dbd47db0cad25b";
 
   const [locale, setLocale] = useState("ru");
 
@@ -80,7 +80,7 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
       collectionId,
       item.$id,
       {
-        date: values.date,
+        date: date,
         desc: values.desc,
         volume: values.volume,
         value: values.value,
