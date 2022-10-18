@@ -47,6 +47,8 @@ const Food = () => {
     setOffset((page - 1) * limit);
   }, [page]);
 
+  const [volumes, setVolumes] = useState([]);
+
   useEffect(() => {
     const getDocuments = async () => {
       const res = await databases.listDocuments(
@@ -66,6 +68,15 @@ const Food = () => {
       setImages(res.files);
     };
     getImages();
+
+    const getVolumes = async () => {
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        "634dee358db7f7944638"
+      );
+      setVolumes(res);
+    };
+    getVolumes();
   }, [limit, offset]);
 
   return (
@@ -133,6 +144,7 @@ const Food = () => {
               items={items}
               setItems={setItems}
               imageList={images}
+              volumes={volumes}
             />
           </Box>
         </Box>

@@ -37,6 +37,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
   "&:disabled": {
     border: `1px solid ${pink[300]}`,
     background: pink[300],
+    color: pink[50],
   },
 }));
 
@@ -52,7 +53,7 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const CreateFoodModal = ({ title, imageList }) => {
+const CreateFoodModal = ({ title, imageList, volumes }) => {
   const collectionId = "634db3dbd47db0cad25b";
 
   const [locale, setLocale] = useState("ru");
@@ -65,6 +66,8 @@ const CreateFoodModal = ({ title, imageList }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [loaded, isLoaded] = useState(false);
+
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -75,16 +78,32 @@ const CreateFoodModal = ({ title, imageList }) => {
       );
       setCategories(res);
     };
+
     getDocuments();
   }, []);
+
+  useEffect(() => {
+    const getImages = async () => {
+      const res = await storage.listFiles("634db50ac1ab6fd9b602");
+      setImages(res.files);
+    };
+    getImages();
+  }, [images]);
+
+  const [date, setDate] = useState(new Date());
+  const [isFood, setIsFood] = useState(true);
+
+  const handleDate = (date) => {
+    setDate(date);
+  };
 
   const [values, setValues] = useState({
     date: new Date(),
     desc: "",
-    isFood: false,
+    isFood: true,
     type: "",
     value: "",
-    image: imageList?.slice(-1)[0]?.$id,
+    image: images?.slice(-1)[0]?.$id,
   });
 
   const handleChange = (prop) => (event) => {
@@ -97,14 +116,16 @@ const CreateFoodModal = ({ title, imageList }) => {
       collectionId,
       "unique()",
       {
-        date: values.date,
+        date: date,
         desc: values.desc,
-        isFood: values.isFood,
+        isFood: isFood,
         type: values.type,
         value: values.value,
-        image: values.image,
+        image: images?.slice(-1)[0]?.$id,
       }
     );
+
+    isLoaded(false);
   };
   const hiddenFileInput = useRef();
 
@@ -114,6 +135,7 @@ const CreateFoodModal = ({ title, imageList }) => {
       "unique()",
       document.getElementById("input").files[0]
     );
+    isLoaded(true);
   };
 
   useEffect(() => {
@@ -148,7 +170,7 @@ const CreateFoodModal = ({ title, imageList }) => {
         <Box ref={ref} className="modal">
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              {title}
+              {imageList?.slice(-1)[0]?.$id}
             </Typography>
           </Box>
 
@@ -160,8 +182,8 @@ const CreateFoodModal = ({ title, imageList }) => {
                   adapterLocale={locale}
                 >
                   <DateTimePicker
-                    value={values.date}
-                    onChange={handleChange("date")}
+                    value={date}
+                    onChange={(newDate) => setDate(newDate)}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </LocalizationProvider>
@@ -228,6 +250,27 @@ const CreateFoodModal = ({ title, imageList }) => {
               </FormControl>
             </Grid>
             <Grid item xs="12">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">
+                  Объём
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  label="Объём"
+                  value={values.volume}
+                  onChange={handleChange("volume")}
+                >
+                  <MenuItem value="">
+                    <em>-</em>
+                  </MenuItem>
+                  {volumes?.documents?.map((volume) => (
+                    <MenuItem value={volume.name}>{volume.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs="12">
               <Box
                 display="flex"
                 justifyContent="space-between"
@@ -247,7 +290,7 @@ const CreateFoodModal = ({ title, imageList }) => {
                 <ColorButton
                   variant="contained"
                   onClick={handleCreate}
-                  disabled={1 === 2}
+                  disabled={loaded === false ? true : false}
                 >
                   Добавить
                 </ColorButton>

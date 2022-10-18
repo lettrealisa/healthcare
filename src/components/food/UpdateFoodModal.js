@@ -110,7 +110,7 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
         <Box sx={style}>
           <Box sx={{ display: "flex", marginBottom: "1rem" }}>
             <Typography id="modal-modal-title">
-              <h2>Алкоголь</h2>
+              <h2>Дневник питания</h2>
             </Typography>
           </Box>
 
