@@ -9,6 +9,9 @@ import Modal from "@mui/material/Modal";
 import Select from "@mui/material/Select";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Query } from "appwrite";
 import { useState } from "react";
 import useClient from "../auth/useClient";
@@ -45,6 +48,8 @@ const ColorButton = styled(Button)(({ theme }) => ({
 const UpdateFoodModal = ({ item, items, setItems }) => {
   const collectionId = "633f248cc4c8e69b367d";
 
+  const [locale, setLocale] = useState("ru");
+
   const { databases } = useClient();
 
   const [open, setOpen] = useState(false);
@@ -62,6 +67,8 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
     volume: item.volume,
     value: item.value,
   });
+
+  const [date, setDate] = useState(new Date(item.date));
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -127,14 +134,16 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
           <Grid container spacing={1}>
             <Grid item xs="12">
               <FormControl variant="standard" fullWidth>
-                <TextField
-                  id="demo-customized-textbox"
-                  variant="outlined"
-                  type="date"
-                  value={values.date}
-                  label=""
-                  onChange={handleChange("date")}
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={locale}
+                >
+                  <DateTimePicker
+                    value={date}
+                    onChange={(newDate) => setDate(newDate)}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
               </FormControl>
             </Grid>
             <Grid item xs="12">
