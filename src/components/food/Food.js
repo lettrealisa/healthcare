@@ -1,8 +1,9 @@
-import { FilterList, Sort } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import {
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -19,6 +20,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import { experimentalStyled as styled, useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -30,6 +32,8 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import useClient from "../auth/useClient";
 import ConfirmationDialog from "../common/ConfirmationDialog";
+import Header from "../common/Header";
+import useCategories from "../common/useCategories";
 import CreateFoodModal from "./CreateFoodModal";
 import UpdateFoodModal from "./UpdateFoodModal";
 
@@ -41,9 +45,22 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const CustomButton = styled(Button)(({ theme }) => ({
+  border: `1px solid ${grey[300]}`,
+  background: grey[300],
+  color: grey[700],
+  textTransform: "none",
+  font: "inherit",
+  padding: "1.2rem",
+  "&:hover": {},
+  "&:disabled": {},
+}));
+
 const Food = () => {
   const [locale, setLocale] = useState("ru");
   const [date, setDate] = useState(new Date());
+
+  const [category, setCategory] = useState(null);
 
   const collectionId = "634db3dbd47db0cad25b";
 
@@ -59,6 +76,20 @@ const Food = () => {
   const handlePage = (e, value) => {
     setPage(value);
   };
+
+  const [values, setValues] = useState({
+    type: "",
+    filters: [
+      { key: "Категория", value: "drink" },
+      { key: "Название", value: "juice" },
+    ],
+  });
+
+  const handleChange = (prop) => (event) => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
+
+  const { categories } = useCategories();
 
   const [limit, setLimit] = useState(9);
   const [offset, setOffset] = useState(0);
@@ -78,7 +109,10 @@ const Food = () => {
       );
       setItems(
         res.documents.filter(
-          (r) => r.desc === "carpaccio" || r.desc === "minestrone"
+          (r) =>
+            r.desc === "carpaccio" ||
+            r.desc === "minestrone" ||
+            r.desc === "juice"
         )
       );
 
@@ -113,8 +147,13 @@ const Food = () => {
 
   return (
     <>
+      <Header label="Healthcare" />
       <Container>
-        <Box display="grid" gridTemplateRows="100px 100px 1fr 100px">
+        <Box
+          display="grid"
+          gridTemplateRows="100px 50px auto 1fr 100px"
+          gap={{ xs: 1, md: 2 }}
+        >
           <Box
             display="flex"
             justifyContent="space-between"
@@ -128,8 +167,20 @@ const Food = () => {
             )}
           </Box>
 
+          <Box sx={{ display: "flex" }} mb={{ xs: 2, md: 3 }}>
+            {values.filters.map((filter) => (
+              <CustomButton endIcon={<Close />} sx={{ marginRight: "2rem" }}>
+                {filter.key}:&nbsp;{filter.value}
+              </CustomButton>
+            ))}
+          </Box>
+
           <Box sx={{ flexGrow: 1 }} mb={{ xs: 2, md: 3 }}>
-            <Grid container spacing={1} columns={{ xs: 4, sm: 8, md: 12 }}>
+            <Grid
+              container
+              spacing={{ xs: 2, md: 3 }}
+              columns={{ xs: 4, sm: 8, md: 12 }}
+            >
               <Grid item xs={2} sm={4} md={4}>
                 <Box
                   maxWidth={345}
@@ -137,8 +188,7 @@ const Food = () => {
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <FilterList sx={{ transform: "scale(1.3)" }} />
-                  <FormControl sx={{ width: 345 - 50 }}>
+                  <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-helper-label">
                       Категория
                     </InputLabel>
@@ -146,10 +196,17 @@ const Food = () => {
                       labelId="demo-simple-select-helper-label"
                       id="demo-simple-select-helper"
                       label="Категория"
+                      value={values.type}
+                      onChange={handleChange("type")}
                     >
                       <MenuItem value="">
                         <em>-</em>
                       </MenuItem>
+                      {categories?.documents?.map((category) => (
+                        <MenuItem value={category.name}>
+                          {category.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 </Box>
@@ -170,23 +227,6 @@ const Food = () => {
                   </FormControl>
                 </Box>
               </Grid>
-              <Grid item xs={2} sm={4} md={4}>
-                <Box maxWidth={345}>
-                  <FormControl variant="standard" fullWidth>
-                    <LocalizationProvider
-                      dateAdapter={AdapterDayjs}
-                      adapterLocale={locale}
-                    >
-                      <DateTimePicker
-                        value={date}
-                        onChange={(newDate) => setDate(newDate)}
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-                    </LocalizationProvider>
-                  </FormControl>
-                </Box>
-              </Grid>
-              <Sort />
             </Grid>
           </Box>
 

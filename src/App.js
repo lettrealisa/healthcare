@@ -24,7 +24,7 @@ const lightTheme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={lightTheme}>
       <CssBaseline />
       <Routes>
         <Route path="/login" element={<SignIn />} />
