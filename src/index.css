@@ -10,15 +10,19 @@
 *::before,
 *::after {
   margin: 0;
+  padding: 0;
   font-family: "Montserrat", sans-serif !important;
 }
 
-body {
-  margin: 0;
-  font-size: 16px;
-  /*display: flex;
-  justify-content: center;*/
+/*body {
+  font-size: 12px !important;
 }
+
+@media only screen and (min-width: 900px) {
+  body {
+    font-size: 16px !important;
+  }
+}*/
 
 .card {
   border-radius: 10px;
@@ -60,6 +64,10 @@ body {
   align-items: center;
 }
 
+.gridContainer {
+  display: grid;
+}
+
 h1,
 h2,
 h3,
@@ -84,11 +92,6 @@ button {
 }
 
 .addCircleIcon {
-  fill: var(--primary) !important;
+  fill: var(--secondary) !important;
   transform: scale(1.5) !important;
 }
-
-/*h1 {
-   margin-bottom: 1rem !important; 
-}
-*/

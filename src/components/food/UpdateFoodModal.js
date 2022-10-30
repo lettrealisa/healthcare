@@ -45,7 +45,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const UpdateFoodModal = ({ item, items, setItems }) => {
+const UpdateFoodModal = ({ item, items, setItems, limit, offset }) => {
   const collectionId = "634db3dbd47db0cad25b";
 
   const [locale, setLocale] = useState("ru");
@@ -91,6 +91,8 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
       setItems(
         await databases.listDocuments("633f24764b9416fbd058", collectionId, [
           Query.orderAsc("date"),
+          Query.limit(limit),
+          Query.offset(offset),
         ])
       );
     };
@@ -108,6 +110,8 @@ const UpdateFoodModal = ({ item, items, setItems }) => {
       setItems(
         await databases.listDocuments("633f24764b9416fbd058", collectionId, [
           Query.orderAsc("date"),
+          Query.limit(limit),
+          Query.offset(offset),
         ])
       );
     };

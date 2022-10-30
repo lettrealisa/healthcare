@@ -15,6 +15,7 @@ import { Query } from "appwrite";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import useClient from "../auth/useClient";
+import Header from "../common/Header";
 import CreateAlcoholModal from "./CreateAlcoholModal";
 import UpdateAlcoholModal from "./UpdateAlcoholModal";
 
@@ -46,6 +47,9 @@ const Alcohol = () => {
   }, [page]);
 
   useEffect(() => {
+    client.subscribe(["documents", "files"], (response) => {
+      console.log(response);
+    });
     const getDocuments = async () => {
       const res = await databases.listDocuments(
         "633f24764b9416fbd058",
@@ -53,10 +57,6 @@ const Alcohol = () => {
         [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
       setItems(res);
-
-      client.subscribe(["documents", "files"], (response) => {
-        console.log(response);
-      });
     };
     getDocuments();
   }, [limit, offset]);
@@ -67,10 +67,16 @@ const Alcohol = () => {
 
   return (
     <>
+      <Header label="Healthcare" />
       <Container>
-        <Box display="grid" gridTemplateRows="100px 1fr 100px">
-          <Box sx={{ alignSelf: "center" }}>
-            <h1 sx={{ margin: 0 }}>Алкоголь</h1>
+        <Box display="grid" gap={{ xs: 1, md: 2 }}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <h1>Алкоголь</h1>
+            <CreateAlcoholModal items={items} setItems={setItems} />
           </Box>
 
           <Box sx={{ flexGrow: 1 }}>
@@ -84,11 +90,25 @@ const Alcohol = () => {
                   <Card>
                     <CardHeader
                       title={
-                        ("0" + new Date(item.date).getDate()).slice(-2) +
-                        "." +
-                        ("0" + (new Date(item.date).getMonth() + 1)).slice(-2) +
-                        "." +
-                        new Date(item.date).getFullYear()
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography>
+                            {("0" + new Date(item.date).getDate()).slice(-2) +
+                              "." +
+                              (
+                                "0" +
+                                (new Date(item.date).getMonth() + 1)
+                              ).slice(-2) +
+                              "." +
+                              new Date(item.date).getFullYear()}
+                          </Typography>
+                          <Typography>
+                            {new Date(item.date).getHours() +
+                              ":" +
+                              ("0" + new Date(item.date).getMinutes()).slice(
+                                -2
+                              )}
+                          </Typography>
+                        </Box>
                       }
                     ></CardHeader>
                     <CardContent>
@@ -104,6 +124,8 @@ const Alcohol = () => {
                         item={item}
                         items={items}
                         setItems={setItems}
+                        limit={limit}
+                        offset={offset}
                       />
                     </CardActions>
                   </Card>
@@ -112,15 +134,12 @@ const Alcohol = () => {
             </Grid>
           </Box>
           <Pagination
-            count={Math.ceil(items?.total / limit)}
+            count={items?.total > 1 ? Math.ceil(items?.total / limit) : 1}
             page={page}
             onChange={handlePage}
             size="large"
             sx={{ display: "flex", justifyContent: "center" }}
           />
-          <Box sx={{ alignSelf: "center" }}>
-            <CreateAlcoholModal items={items} setItems={setItems} />
-          </Box>
         </Box>
       </Container>
     </>

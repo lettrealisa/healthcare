@@ -1,6 +1,4 @@
 import { Close } from "@mui/icons-material";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
 import {
   Box,
   Button,
@@ -51,7 +49,8 @@ const CustomButton = styled(Button)(({ theme }) => ({
   color: grey[700],
   textTransform: "none",
   font: "inherit",
-  padding: "1.2rem",
+  padding: "0.5rem",
+  maxHeight: "50px",
   "&:hover": {},
   "&:disabled": {},
 }));
@@ -107,14 +106,17 @@ const Food = () => {
         collectionId,
         [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
-      setItems(
-        res.documents.filter(
+      setItems(res);
+      /*if (values.type !== null) {
+        setItems(res?.documents?.filter((r) => r.type === values.type));
+      } else setItems(res);*/
+
+      /* .filter(
           (r) =>
             r.desc === "carpaccio" ||
             r.desc === "minestrone" ||
             r.desc === "juice"
-        )
-      );
+        ) */
 
       console.log(res.documents);
 
@@ -123,10 +125,6 @@ const Food = () => {
           (r) => r.desc === "carpaccio" || r.desc === "minestrone"
         )
       );
-
-      client.subscribe(["documents", "files"], (response) => {
-        console.log(response);
-      });
     };
     getDocuments();
     const getImages = async () => {
@@ -143,31 +141,39 @@ const Food = () => {
       setVolumes(res);
     };
     getVolumes();
-  }, [limit, offset]);
+  }, [limit, offset, values.type]);
+
+  const addFilter = (filter) => {
+    handleChange("type");
+    values.filters.push(filter);
+  };
+
+  useEffect(() => {
+    client.subscribe(["documents", "files"], (response) => {
+      console.log(response);
+    });
+  }, [client]);
 
   return (
     <>
       <Header label="Healthcare" />
       <Container>
-        <Box
-          display="grid"
-          gridTemplateRows="100px 50px auto 1fr 100px"
-          gap={{ xs: 1, md: 2 }}
-        >
+        <Box display="grid" gap={{ xs: 1, md: 2 }}>
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
           >
             <h1>Дневник питания</h1>
-            {theme.palette.mode === "dark" ? (
-              <Brightness7Icon />
-            ) : (
-              <Brightness4Icon />
-            )}
+            <CreateFoodModal
+              items={items}
+              setItems={setItems}
+              imageList={images}
+              volumes={volumes}
+            />
           </Box>
 
-          <Box sx={{ display: "flex" }} mb={{ xs: 2, md: 3 }}>
+          <Box sx={{ display: "none" }}>
             {values.filters.map((filter) => (
               <CustomButton endIcon={<Close />} sx={{ marginRight: "2rem" }}>
                 {filter.key}:&nbsp;{filter.value}
@@ -175,7 +181,7 @@ const Food = () => {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 1 }} mb={{ xs: 2, md: 3 }}>
+          <Box sx={{ flexGrow: 1 }}>
             <Grid
               container
               spacing={{ xs: 2, md: 3 }}
@@ -188,7 +194,7 @@ const Food = () => {
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <FormControl fullWidth>
+                  <FormControl fullWidth className="">
                     <InputLabel id="demo-simple-select-helper-label">
                       Категория
                     </InputLabel>
@@ -236,7 +242,7 @@ const Food = () => {
               spacing={{ xs: 2, md: 3 }}
               columns={{ xs: 4, sm: 8, md: 12 }}
             >
-              {items?.map((item) => (
+              {items?.documents?.map((item) => (
                 <Grid item xs={2} sm={4} md={4} key={item.$id}>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardHeader
@@ -284,6 +290,8 @@ const Food = () => {
                         item={item}
                         items={items}
                         setItems={setItems}
+                        limit={limit}
+                        offset={offset}
                       />
                     </CardActions>
                   </Card>
@@ -296,16 +304,12 @@ const Food = () => {
             page={page}
             onChange={handlePage}
             size="large"
-            sx={{ display: "flex", justifyContent: "center" }}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+            }}
           />
-          <Box sx={{ alignSelf: "center" }}>
-            <CreateFoodModal
-              items={items}
-              setItems={setItems}
-              imageList={images}
-              volumes={volumes}
-            />
-          </Box>
+
           <ConfirmationDialog />
         </Box>
       </Container>

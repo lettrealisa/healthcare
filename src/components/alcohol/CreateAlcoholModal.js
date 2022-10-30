@@ -1,16 +1,20 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import Box from "@mui/material/Box";
+import { pink } from "@mui/material/colors";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Select from "@mui/material/Select";
+import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import "dayjs/locale/ru";
 import { useEffect, useState } from "react";
 import useClient from "../auth/useClient";
-import CustomButton from "../common/CustomButton";
 
 const style = {
   position: "absolute",
@@ -25,8 +29,28 @@ const style = {
   borderRadius: "10px",
 };
 
+const ColorButton = styled(Button)(({ theme }) => ({
+  border: `1px solid ${pink[600]}`,
+  background: pink[600],
+  color: "#fff",
+  "&:hover": {
+    border: `1px solid ${pink[600]}`,
+    background: "#fff",
+    color: pink[600],
+  },
+  "&:disabled": {
+    border: `1px solid ${pink[300]}`,
+    background: pink[300],
+    color: pink[50],
+  },
+}));
+
 const CreateAlcoholModal = ({ items, setItems }) => {
   const collectionId = "633f248cc4c8e69b367d";
+
+  const [locale, setLocale] = useState("ru");
+
+  const [date, setDate] = useState(new Date());
 
   const { databases } = useClient();
 
@@ -95,22 +119,19 @@ const CreateAlcoholModal = ({ items, setItems }) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Box sx={{ display: "flex", marginBottom: "1rem" }}>
-            <Typography id="modal-modal-title">
-              <h2>Алкоголь</h2>
-            </Typography>
-          </Box>
-
           <Grid container spacing={1}>
             <Grid item xs="12">
               <FormControl variant="standard" fullWidth>
-                <TextField
-                  id="demo-customized-textbox"
-                  variant="outlined"
-                  type="date"
-                  value={values.date}
-                  onChange={handleChange("date")}
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={locale}
+                >
+                  <DateTimePicker
+                    value={date}
+                    onChange={(newDate) => setDate(newDate)}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
               </FormControl>
             </Grid>
 
@@ -159,8 +180,10 @@ const CreateAlcoholModal = ({ items, setItems }) => {
               </FormControl>
             </Grid>
           </Grid>
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <CustomButton label="Добавить" onClick={handleCreate} />
+          <Box sx={{ mt: 2 }}>
+            <ColorButton variant="contained" fullWidth onClick={handleCreate}>
+              Добавить
+            </ColorButton>
           </Box>
         </Box>
       </Modal>

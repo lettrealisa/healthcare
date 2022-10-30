@@ -143,11 +143,12 @@ const CreateFoodModal = ({ title, imageList, volumes, setItems }) => {
     isLoaded(false);
 
     const getDocuments = async () => {
-      setItems(
-        await databases.listDocuments("633f24764b9416fbd058", collectionId, [
-          Query.orderAsc("date"),
-        ])
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        collectionId,
+        [Query.orderAsc("date")]
       );
+      setItems(res);
     };
     getDocuments();
   };
