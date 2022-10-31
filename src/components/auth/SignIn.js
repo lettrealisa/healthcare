@@ -31,26 +31,14 @@ const style = {
 };
 
 const SignIn = () => {
-  const { setUser, setRoles, members, setMembers, rememberMe, setRememberMe } =
-    useAuth();
+  const { setIsLoggedIn } = useAuth();
   const { account, teams } = useClient();
-
-  const toggleRememberMe = () => {
-    setRememberMe((prev) => !prev);
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     await account.createEmailSession(values.username, values.password);
-
-    const roles = await teams.list();
-
-    roles.teams.forEach(async (role) => {
-      setMembers(await teams.listMemberships(role.$id));
-    });
-
-    console.log(members);
+    setIsLoggedIn(true);
   };
 
   const [values, setValues] = React.useState({
@@ -130,13 +118,7 @@ const SignIn = () => {
           </Grid>
           <Grid item xs="12">
             <FormControlLabel
-              control={
-                <Checkbox
-                  id="rememberMe"
-                  checked={rememberMe}
-                  onChange={toggleRememberMe}
-                ></Checkbox>
-              }
+              control={<Checkbox id="rememberMe"></Checkbox>}
               label="Запомнить меня?"
             />
           </Grid>

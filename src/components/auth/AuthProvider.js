@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export const AuthContext = createContext({});
 
@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }) => {
   );
   const [user, setUser] = ["test"];
   const [roles, setRoles] = ["test"];
-  const [members, setMembers] = React.useState({});
+  const [members, setMembers] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <AuthContext.Provider
@@ -24,6 +25,8 @@ export const AuthProvider = ({ children }) => {
         setRoles,
         members,
         setMembers,
+        isLoggedIn,
+        setIsLoggedIn,
       }}
     >
       {children}

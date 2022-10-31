@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
-import { experimentalStyled as styled, useTheme } from "@mui/material/styles";
+import { experimentalStyled as styled } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -30,7 +30,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import useClient from "../auth/useClient";
 import ConfirmationDialog from "../common/ConfirmationDialog";
-import Header from "../common/Header";
+import ResponsiveAppBar from "../common/ResponsiveAppBar";
 import useCategories from "../common/useCategories";
 import CreateFoodModal from "./CreateFoodModal";
 import UpdateFoodModal from "./UpdateFoodModal";
@@ -62,9 +62,6 @@ const Food = () => {
   const [category, setCategory] = useState(null);
 
   const collectionId = "634db3dbd47db0cad25b";
-
-  const theme = useTheme();
-  //const colorMode = useContext(ColorModeContext);
 
   const [items, setItems] = useState([]);
   const [images, setImages] = useState([]);
@@ -107,24 +104,6 @@ const Food = () => {
         [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
       setItems(res);
-      /*if (values.type !== null) {
-        setItems(res?.documents?.filter((r) => r.type === values.type));
-      } else setItems(res);*/
-
-      /* .filter(
-          (r) =>
-            r.desc === "carpaccio" ||
-            r.desc === "minestrone" ||
-            r.desc === "juice"
-        ) */
-
-      console.log(res.documents);
-
-      console.log(
-        res.documents.filter(
-          (r) => r.desc === "carpaccio" || r.desc === "minestrone"
-        )
-      );
     };
     getDocuments();
     const getImages = async () => {
@@ -156,7 +135,7 @@ const Food = () => {
 
   return (
     <>
-      <Header label="Healthcare" />
+      <ResponsiveAppBar />
       <Container>
         <Box display="grid" gap={{ xs: 1, md: 2 }}>
           <Box

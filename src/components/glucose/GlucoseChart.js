@@ -1,6 +1,6 @@
-import axios from "axios";
 import { React, useEffect, useState } from "react";
 import { useData } from "../../context/DataProvider";
+import useClient from "../auth/useClient";
 
 import {
   CategoryScale,
@@ -57,10 +57,9 @@ Chart.defaults.font.family = "Montserrat, sans-serif";
 Chart.defaults.font.size = 16;
 
 const GlucoseChart = () => {
+  const collectionId = "634dee997a4f62abf628";
   const parseDate = (date) => {
     const d = new Date(date * 1000);
-    //const h = d.toLocaleString()
-    //return addWeeks(date, 100)
     return d;
   };
   const handleWeek = (date) => {
@@ -83,37 +82,39 @@ const GlucoseChart = () => {
   const [chartData, setChartData] = useState([]);
   const [labels, setLabels] = useState([]);
   const { month, day, week, year } = useData();
+  const { databases } = useClient();
   useEffect(() => {
     const getData = async () => {
-      const res = await axios.get("http://localhost:12012/alcohol");
-      const docs = res.data.documents;
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        collectionId
+      );
+
+      const docs = res.documents;
       console.log(docs);
 
-      //setLabels(docs.filter((t) => parseDate(t.data.date) === parseDate(1656589004.291822)).map((d) => parseDate(d.data.date)))
       const handleLabels = () => {
         if (
           (year !== null && month !== null && day === null && week !== null) ||
           (month !== "" && day === "" && week !== "")
         ) {
-          //if(week !== null || week !== "") {
           setLabels(
             docs
               .filter(
                 (t) =>
-                  parseDate(t.data.date).getFullYear() === year &&
-                  parseDate(t.data.date).getMonth() + 1 === month &&
-                  handleWeek(parseDate(t.data.date)) === week
+                  parseDate(t.date).getFullYear() === year &&
+                  parseDate(t.date).getMonth() + 1 === month &&
+                  handleWeek(parseDate(t.date)) === week
               )
               .map(
                 (d) =>
-                  parseDate(d.data.date).getDate() +
+                  parseDate(d.date).getDate() +
                   "." +
-                  parseDate(d.data.date).getMonth() +
+                  parseDate(d.date).getMonth() +
                   "." +
-                  parseDate(d.data.date).getFullYear()
+                  parseDate(d.date).getFullYear()
               )
           );
-          //} else setLabels(docs.filter((t) => parseDate(t.data.date).getFullYear() === year && parseDate(t.data.date).getMonth() + 1 === month).map((d) => parseDate(d.data.date).getDate() + '.' + parseDate(d.data.date).getMonth() + '.' + parseDate(d.data.date).getFullYear()))
         } else if (
           (year !== null && month !== null && day === null && week === null) ||
           (month !== "" && day === "" && week === "")
@@ -122,16 +123,16 @@ const GlucoseChart = () => {
             docs
               .filter(
                 (t) =>
-                  parseDate(t.data.date).getFullYear() === year &&
-                  parseDate(t.data.date).getMonth() + 1 === month
+                  parseDate(t.date).getFullYear() === year &&
+                  parseDate(t.date).getMonth() + 1 === month
               )
               .map(
                 (d) =>
-                  parseDate(d.data.date).getDate() +
+                  parseDate(d.date).getDate() +
                   "." +
-                  parseDate(d.data.date).getMonth() +
+                  parseDate(d.date).getMonth() +
                   "." +
-                  parseDate(d.data.date).getFullYear()
+                  parseDate(d.date).getFullYear()
               )
           );
         } else if (
@@ -142,25 +143,22 @@ const GlucoseChart = () => {
             docs
               .filter(
                 (t) =>
-                  parseDate(t.data.date).getFullYear() === year &&
-                  parseDate(t.data.date).getMonth() + 1 === month &&
-                  parseDate(t.data.date).getDate() === day
+                  parseDate(t.date).getFullYear() === year &&
+                  parseDate(t.date).getMonth() + 1 === month &&
+                  parseDate(t.date).getDate() === day
               )
               .map(
                 (d) =>
-                  parseDate(d.data.date).getHours() +
+                  parseDate(d.date).getHours() +
                   ":" +
-                  parseDate(d.data.date).getMinutes()
+                  parseDate(d.date).getMinutes()
               )
           );
         }
       };
       handleLabels();
-      //setLabels(docs.filter((t) => parseDate(t.data.date).getMonth() + 1 === month || parseDate(t.data.date).getDate() === day || handleWeek() === week).map((d) => parseDate(d.data.date).getHours() + ':' + parseDate(d.data.date).getMinutes()))
-      //setLabels(docs.map((d) => parseDate(d.data.date)))
-      setChartData(docs.map((d) => d.data.glucose));
-      console.log(new Date(1656588502.317451 * 1000).getMonth() + 1);
-      console.log(month, day);
+
+      setChartData(docs.map((d) => d.value));
     };
     getData();
   }, [month, day, week, year]);
