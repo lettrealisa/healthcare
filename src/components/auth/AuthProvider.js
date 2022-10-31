@@ -4,13 +4,13 @@ export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({});
-  const [rememberMe, setRememberMe] = useState(
-    JSON.parse(localStorage.getItem("rememberMe")) || false
-  );
   const [user, setUser] = ["test"];
   const [roles, setRoles] = ["test"];
   const [members, setMembers] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [rememberMe, setRememberMe] = useState(
+    JSON.parse(localStorage.getItem("rememberMe")) || false
+  );
 
   return (
     <AuthContext.Provider

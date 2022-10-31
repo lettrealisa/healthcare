@@ -95,3 +95,10 @@ button {
   fill: var(--secondary) !important;
   transform: scale(1.5) !important;
 }
+
+.link {
+  text-decoration: none;
+  color: #fff;
+  margin-right: 1rem;
+  display: block;
+}

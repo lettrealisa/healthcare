@@ -28,12 +28,13 @@ function App() {
       <Routes>
         <Route path="/login" element={<SignIn />} />
         <Route path="/" element={<SignIn />}></Route>
-        <Route path="/glucose" element={<Glucose />}></Route>
+
         <Route element={<RequireAuth />}>
           <Route path="/food" element={<Food />}></Route>
+          <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/alcohol" element={<Alcohol />}></Route>
+          <Route path="/glucose" element={<Glucose />}></Route>
         </Route>
-        <Route path="/profile" element={<Profile />}></Route>
-        <Route path="/alcohol" element={<Alcohol />}></Route>
       </Routes>
     </ThemeProvider>
   );

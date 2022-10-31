@@ -3,14 +3,17 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
+  Input,
   InputAdornment,
   OutlinedInput,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
+import { pink } from "@mui/material/colors";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
+import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
@@ -30,15 +33,48 @@ const style = {
   borderRadius: "10px",
 };
 
+const ColorButton = styled(Button)(({ theme }) => ({
+  border: `1px solid ${pink[600]}`,
+  background: pink[600],
+  color: "#fff",
+  "&:hover": {
+    border: `1px solid ${pink[600]}`,
+    background: "#fff",
+    color: pink[600],
+  },
+  "&:disabled": {
+    border: `1px solid ${pink[300]}`,
+    background: pink[300],
+    color: pink[50],
+  },
+}));
+
+const ColorCheckbox = styled(Checkbox)(({ theme }) => ({
+  color: pink[600],
+  "&.Mui-checked": {
+    color: pink[600],
+  },
+}));
+
+const ColorInput = styled(Input)(({ theme }) => ({
+  "&:hover": {
+    color: pink[600],
+  },
+}));
+
 const SignIn = () => {
-  const { setIsLoggedIn } = useAuth();
-  const { account, teams } = useClient();
+  const { setIsLoggedIn, rememberMe, setRememberMe } = useAuth();
+  const { account } = useClient();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     await account.createEmailSession(values.username, values.password);
     setIsLoggedIn(true);
+  };
+
+  const toggleRememberMe = () => {
+    setRememberMe((prev) => !prev);
   };
 
   const [values, setValues] = React.useState({
@@ -83,7 +119,7 @@ const SignIn = () => {
             >
               <TextField
                 id="outlined-basic"
-                label="Логин"
+                label="Email"
                 variant="outlined"
                 value={values.username}
                 onChange={handleChange("username")}
@@ -118,21 +154,18 @@ const SignIn = () => {
           </Grid>
           <Grid item xs="12">
             <FormControlLabel
-              control={<Checkbox id="rememberMe"></Checkbox>}
+              control={<ColorCheckbox id="rememberMe" />}
               label="Запомнить меня?"
+              onChange={toggleRememberMe}
+              checked={rememberMe}
             />
           </Grid>
         </Grid>
 
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Button
-            variant="contained"
-            sx={{ mt: 2, width: "100%" }}
-            className="bg-primary"
-            onClick={(e) => handleLogin(e)}
-          >
+        <Box sx={{ mt: 2 }}>
+          <ColorButton variant="contained" fullWidth onClick={handleLogin}>
             Войти
-          </Button>
+          </ColorButton>
         </Box>
       </Box>
     </Box>

@@ -1,13 +1,13 @@
 import { Box, Container } from "@mui/system";
-import Header from "../common/Header";
+import ResponsiveAppBar from "../common/ResponsiveAppBar";
 import GlucoseChart from "./GlucoseChart";
 
 const Glucose = () => {
   return (
     <>
-      <Header label="Healthcare" />
+      <ResponsiveAppBar />
       <Container>
-        <Box display="grid" gap={{ xs: 1, md: 2 }}>
+        <Box display="grid" gap={{ xs: 1, md: 2 }} mt={4} mb={4}>
           <Box
             display="flex"
             justifyContent="space-between"

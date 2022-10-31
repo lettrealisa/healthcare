@@ -137,7 +137,7 @@ const Food = () => {
     <>
       <ResponsiveAppBar />
       <Container>
-        <Box display="grid" gap={{ xs: 1, md: 2 }}>
+        <Box display="grid" gap={{ xs: 1, md: 2 }} mt={4} mb={4}>
           <Box
             display="flex"
             justifyContent="space-between"

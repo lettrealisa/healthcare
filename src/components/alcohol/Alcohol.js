@@ -15,7 +15,7 @@ import { Query } from "appwrite";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import useClient from "../auth/useClient";
-import Header from "../common/Header";
+import ResponsiveAppBar from "../common/ResponsiveAppBar";
 import CreateAlcoholModal from "./CreateAlcoholModal";
 import UpdateAlcoholModal from "./UpdateAlcoholModal";
 
@@ -67,9 +67,9 @@ const Alcohol = () => {
 
   return (
     <>
-      <Header label="Healthcare" />
+      <ResponsiveAppBar />
       <Container>
-        <Box display="grid" gap={{ xs: 1, md: 2 }}>
+        <Box display="grid" gap={{ xs: 1, md: 2 }} mt={4} mb={4}>
           <Box
             display="flex"
             justifyContent="space-between"
