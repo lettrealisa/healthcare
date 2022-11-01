@@ -56,7 +56,7 @@ export const options = {
 Chart.defaults.font.family = "Montserrat, sans-serif";
 Chart.defaults.font.size = 16;
 
-const GlucoseChart = () => {
+const GlucoseChart = ({ date, byMonth }) => {
   const collectionId = "634dee997a4f62abf628";
 
   const handleWeek = (date) => {
@@ -68,14 +68,7 @@ const GlucoseChart = () => {
     const res = getWeekOfMonth();
     return parseInt(res);
   };
-  const getMonth = (date) => {
-    return date.getMonth();
-  };
-  const addWeeks = (date, weeks) => {
-    const d = new Date(date);
-    d.setDate(d.getDate() + weeks * 7);
-    return d;
-  };
+
   const [chartData, setChartData] = useState([]);
   const [labels, setLabels] = useState([]);
   const { month, day, week, year } = useData();
@@ -88,63 +81,47 @@ const GlucoseChart = () => {
       );
 
       const docs = res.documents;
-      console.log(new Date(docs[0].date).getFullYear());
+
+      console.log(
+        ("0" + new Date(docs[0].date).getHours()).slice(-2) +
+          ":" +
+          ("0" + new Date(docs[0].date).getMinutes()).slice(-2)
+      );
 
       const handleLabels = () => {
-        if (
-          (year !== null && month !== null && day === null && week !== null) ||
-          (month !== "" && day === "" && week !== "")
-        ) {
-          setLabels(
-            docs
-              .filter(
-                (t) =>
-                  t.date.getFullYear() === year &&
-                  t.date.getMonth() + 1 === month &&
-                  handleWeek(t.date) === week
-              )
-              .map(
-                (d) =>
-                  d.date.getDate() +
-                  "." +
-                  d.date.getMonth() +
-                  "." +
-                  d.date.getFullYear()
-              )
-          );
-        } else if (
-          (year !== null && month !== null && day === null && week === null) ||
-          (month !== "" && day === "" && week === "")
-        ) {
-          setLabels(
-            docs
-              .filter(
-                (t) =>
-                  t.date.getFullYear() === year &&
-                  t.date.getMonth() + 1 === month
-              )
-              .map(
-                (d) =>
-                  d.date.getDate() +
-                  "." +
-                  d.date.getMonth() +
-                  "." +
-                  d.date.getFullYear()
-              )
-          );
-        } else if (
-          (year !== null && month !== null && day !== null) ||
-          (month !== "" && day !== "")
-        ) {
+        if (byMonth) {
           setLabels(
             docs
               .filter(
                 (t) =>
                   new Date(t.date).getFullYear() === year &&
-                  new Date(t.date.getMonth() + 1) === month &&
+                  new Date(t.date).getMonth() + 1 === month &&
+                  handleWeek(new Date(t.date)) === week
+              )
+              .map(
+                (d) =>
+                  ("0" + new Date(d.date).getDate()).slice(-2) +
+                  "." +
+                  ("0" + (new Date(d.date).getMonth() + 1)).slice(-2) +
+                  "." +
+                  new Date(d.date).getFullYear()
+              )
+          );
+        } else {
+          setLabels(
+            docs
+              .filter(
+                (t) =>
+                  new Date(t.date).getFullYear() === year &&
+                  new Date(t.date).getMonth() + 1 === month &&
                   new Date(t.date).getDate() === day
               )
-              .map((d) => d.date.getHours() + ":" + d.date.getMinutes())
+              .map(
+                (d) =>
+                  ("0" + new Date(d.date).getHours()).slice(-2) +
+                  ":" +
+                  ("0" + new Date(d.date).getMinutes()).slice(-2)
+              )
           );
         }
       };
@@ -153,7 +130,7 @@ const GlucoseChart = () => {
       setChartData(docs.map((d) => d.value));
     };
     getData();
-  }, [month, day, week, year]);
+  }, [byMonth]);
 
   const data = {
     labels,

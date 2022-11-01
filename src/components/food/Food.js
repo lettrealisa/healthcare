@@ -1,4 +1,3 @@
-import { Close } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -59,7 +58,7 @@ const Food = () => {
   const [locale, setLocale] = useState("ru");
   const [date, setDate] = useState(new Date());
 
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState("");
 
   const collectionId = "634db3dbd47db0cad25b";
 
@@ -74,11 +73,7 @@ const Food = () => {
   };
 
   const [values, setValues] = useState({
-    type: "",
-    filters: [
-      { key: "Категория", value: "drink" },
-      { key: "Название", value: "juice" },
-    ],
+    category: "",
   });
 
   const handleChange = (prop) => (event) => {
@@ -103,7 +98,15 @@ const Food = () => {
         collectionId,
         [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
-      setItems(res);
+      if (values.category !== "") {
+        setItems(
+          res.documents.filter(
+            (r) => r.type === values.category || r.date === date
+          )
+        );
+      } else {
+        setItems(res.documents);
+      }
     };
     getDocuments();
     const getImages = async () => {
@@ -120,12 +123,7 @@ const Food = () => {
       setVolumes(res);
     };
     getVolumes();
-  }, [limit, offset, values.type]);
-
-  const addFilter = (filter) => {
-    handleChange("type");
-    values.filters.push(filter);
-  };
+  }, [limit, offset, values.category, date]);
 
   useEffect(() => {
     client.subscribe(["documents", "files"], (response) => {
@@ -152,14 +150,6 @@ const Food = () => {
             />
           </Box>
 
-          <Box sx={{ display: "none" }}>
-            {values.filters.map((filter) => (
-              <CustomButton endIcon={<Close />} sx={{ marginRight: "2rem" }}>
-                {filter.key}:&nbsp;{filter.value}
-              </CustomButton>
-            ))}
-          </Box>
-
           <Box sx={{ flexGrow: 1 }}>
             <Grid
               container
@@ -173,7 +163,7 @@ const Food = () => {
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <FormControl fullWidth className="">
+                  <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-helper-label">
                       Категория
                     </InputLabel>
@@ -181,8 +171,8 @@ const Food = () => {
                       labelId="demo-simple-select-helper-label"
                       id="demo-simple-select-helper"
                       label="Категория"
-                      value={values.type}
-                      onChange={handleChange("type")}
+                      value={values.category}
+                      onChange={handleChange("category")}
                     >
                       <MenuItem value="">
                         <em>-</em>
@@ -221,7 +211,7 @@ const Food = () => {
               spacing={{ xs: 2, md: 3 }}
               columns={{ xs: 4, sm: 8, md: 12 }}
             >
-              {items?.documents?.map((item) => (
+              {items?.map((item) => (
                 <Grid item xs={2} sm={4} md={4} key={item.$id}>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardHeader

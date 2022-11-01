@@ -55,7 +55,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 }));
 
 const GreenSwitch = styled(Switch)(({ theme }) => ({
-  "& .MuiCheckbox-root": {
+  "& .MuiSwitch-switchBase.Mui-checked": {
     color: pink[600],
     "&:hover": {
       backgroundColor: alpha(pink[600], theme.palette.action.hoverOpacity),
