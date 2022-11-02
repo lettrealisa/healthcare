@@ -17,6 +17,7 @@ import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 import useClient from "./useClient";
 
@@ -65,12 +66,15 @@ const ColorInput = styled(Input)(({ theme }) => ({
 const SignIn = () => {
   const { setIsLoggedIn, rememberMe, setRememberMe } = useAuth();
   const { account } = useClient();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     await account.createEmailSession(values.username, values.password);
     setIsLoggedIn(true);
+
+    navigate("/food");
   };
 
   const toggleRememberMe = () => {
