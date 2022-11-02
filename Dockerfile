@@ -7,5 +7,6 @@ RUN npm run build
 
 FROM nginx:1.16.0-alpine
 COPY --from=builder /assignment-app/build /usr/share/nginx/html
-EXPOSE 8080
+COPY ./default.conf /etc/nginx/conf.d/
+EXPOSE 80:8080
 CMD ["nginx", "-g", "daemon off;"]
