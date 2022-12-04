@@ -1,17 +1,70 @@
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
+import { pink } from "@mui/material/colors";
 import CssBaseline from "@mui/material/CssBaseline";
+import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../useAuth";
+import useClient from "../useClient";
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  border: `1px solid ${pink[600]}`,
+  background: pink[600],
+  color: "#fff",
+  "&:hover": {
+    border: `1px solid ${pink[600]}`,
+    background: "#fff",
+    color: pink[600],
+  },
+  "&:disabled": {
+    border: `1px solid ${pink[300]}`,
+    background: pink[300],
+    color: pink[50],
+  },
+}));
+
+const ColorCheckbox = styled(Checkbox)(({ theme }) => ({
+  color: pink[600],
+  "&.Mui-checked": {
+    color: pink[600],
+  },
+}));
+
+const ColorTextField = styled(TextField)({
+  "& input:valid + fieldset": {
+    borderColor: "green",
+    borderWidth: 2,
+  },
+  "& input:invalid + fieldset": {
+    borderColor: "red",
+    borderWidth: 2,
+  },
+  "& input:valid:focus + fieldset": {
+    borderColor: pink[600],
+    borderLeftWidth: 6,
+    padding: "4px !important", // override inline-style
+  },
+});
+
+const ColorInput = styled(OutlinedInput)({
+  "&.Mui-focused fieldset": {
+    borderColor: "yellow",
+  },
+});
 
 function Copyright(props) {
   return (
@@ -34,13 +87,45 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+  const { setIsLoggedIn, rememberMe, setRememberMe } = useAuth();
+  const { account } = useClient();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    await account.createEmailSession(values.username, values.password);
+    setIsLoggedIn(true);
+
+    navigate("/food");
+  };
+
+  const toggleRememberMe = () => {
+    setRememberMe((prev) => !prev);
+  };
+
+  const [values, setValues] = React.useState({
+    email: "",
+    amount: "",
+    password: "",
+    weight: "",
+    weightRange: "",
+    showPassword: false,
+  });
+
+  const handleChange = (prop) => (event) => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
+
+  const handleClickShowPassword = () => {
+    setValues({
+      ...values,
+      showPassword: !values.showPassword,
     });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -80,12 +165,7 @@ export default function SignIn() {
             <Typography component="h1" variant="h5">
               Вход
             </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
+            <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required
@@ -95,20 +175,43 @@ export default function SignIn() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                value={values.email}
+                onChange={handleChange("email")}
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Пароль"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="password">Пароль</InputLabel>
+                <OutlinedInput
+                  id="password"
+                  required
+                  autoFocus
+                  type={values.showPassword ? "text" : "password"}
+                  value={values.password}
+                  onChange={handleChange("password")}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {values.showPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
+              <FormControl variant="outlined" fullWidth sx={{ mt: 1 }}>
+                <ColorTextField id="bruh" label="Что-то ещё" />
+              </FormControl>
               <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Запомнить меня"
+                control={<ColorCheckbox value="remember" color="primary" />}
+                label="Запомнить меня?"
               />
               <Button
                 type="submit"

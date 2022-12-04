@@ -1,3 +1,4 @@
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
   Button,
@@ -7,9 +8,11 @@ import {
   CardHeader,
   CardMedia,
   Chip,
+  Collapse,
   Container,
   FormControl,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Pagination,
@@ -54,9 +57,40 @@ const CustomButton = styled(Button)(({ theme }) => ({
   "&:disabled": {},
 }));
 
+const ExpandMore = styled((props) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
+  marginLeft: "auto",
+  transition: theme.transitions.create("transform", {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
+
 const Food = () => {
   const [locale, setLocale] = useState("ru");
   const [date, setDate] = useState(new Date());
+
+  const [expanded, setExpanded] = useState(true);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  const groupItemsByDate = (items, res) => {
+    items.forEach((item) => {
+      const date = item.date.split("T")[0];
+      if (res[date]) res[date].push(item);
+      else res[date] = [item];
+    });
+
+    console.log(res);
+    console.log("T");
+    Object.keys(res).map((key) => console.log(res[key][0]));
+
+    return res;
+  };
 
   const [category, setCategory] = useState("");
 
@@ -91,6 +125,8 @@ const Food = () => {
 
   const [volumes, setVolumes] = useState([]);
 
+  const [groups, setGroups] = useState({});
+
   useEffect(() => {
     const getDocuments = async () => {
       const res = await databases.listDocuments(
@@ -98,6 +134,11 @@ const Food = () => {
         collectionId,
         [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
+
+      console.log(res);
+      console.log(groupItemsByDate(res.documents, {}));
+      setGroups(groupItemsByDate(res.documents, {}));
+
       if (values.category !== "") {
         setItems(
           res.documents.filter(
@@ -142,6 +183,12 @@ const Food = () => {
             alignItems="center"
           >
             <h1>Дневник питания</h1>
+            {Object.keys(groups).map((key) => (
+              <Box key={key}>
+                <div>{key}</div>
+                <div>{groups[key].map((k) => <div>{k.desc}</div>)}</div>
+              </Box>
+            ))}
             <CreateFoodModal
               items={items}
               setItems={setItems}
@@ -263,6 +310,19 @@ const Food = () => {
                         offset={offset}
                       />
                     </CardActions>
+                    <ExpandMore
+                      expand={expanded}
+                      onClick={handleExpandClick}
+                      aria-expanded={expanded}
+                      aria-label="show more"
+                    >
+                      <ExpandMoreIcon />
+                    </ExpandMore>
+                    <Collapse in={expanded} timeout="auto" unmountOnExit>
+                      <CardContent>
+                        <Typography paragraph>Sample Text</Typography>
+                      </CardContent>
+                    </Collapse>
                   </Card>
                 </Grid>
               ))}
