@@ -72,11 +72,22 @@ const Food = () => {
   const [locale, setLocale] = useState("ru");
   const [date, setDate] = useState(new Date());
 
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const [row, setRow] = useState("");
+
+
+  const handleRow = (id) => {
+    setRow(id);
+  };
+
+  const closeDrawer = () => {
+    setRow("");
+  }
 
   const groupItemsByDate = (items, res) => {
     items.forEach((item) => {
@@ -186,7 +197,15 @@ const Food = () => {
             {Object.keys(groups).map((key) => (
               <Box key={key}>
                 <div>{key}</div>
-                <div>{groups[key].map((k) => <div>{k.desc}</div>)}</div>
+                <div>
+                  {groups[key].map((k) => (
+                    <>
+                      <div onClick={() => handleRow(k.$id)}>{k.desc}</div>
+                      {row !== "" && row === k.$id ? <div>{k.type}</div> : null}
+                      <button onClick={closeDrawer}>x</button>
+                    </>
+                  ))}
+                </div>
               </Box>
             ))}
             <CreateFoodModal
@@ -258,7 +277,7 @@ const Food = () => {
               spacing={{ xs: 2, md: 3 }}
               columns={{ xs: 4, sm: 8, md: 12 }}
             >
-              {items?.map((item) => (
+              {items?.map((item, index) => (
                 <Grid item xs={2} sm={4} md={4} key={item.$id}>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardHeader
@@ -312,7 +331,7 @@ const Food = () => {
                     </CardActions>
                     <ExpandMore
                       expand={expanded}
-                      onClick={handleExpandClick}
+                      onClick={() => handleExpandClick(index)}
                       aria-expanded={expanded}
                       aria-label="show more"
                     >
