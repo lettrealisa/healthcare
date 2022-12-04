@@ -80,14 +80,14 @@ const Food = () => {
 
   const [row, setRow] = useState("");
 
-
   const handleRow = (id) => {
-    setRow(id);
+    if (row === id) setRow("");
+    else setRow(id);
   };
 
   const closeDrawer = () => {
     setRow("");
-  }
+  };
 
   const groupItemsByDate = (items, res) => {
     items.forEach((item) => {
@@ -201,8 +201,13 @@ const Food = () => {
                   {groups[key].map((k) => (
                     <>
                       <div onClick={() => handleRow(k.$id)}>{k.desc}</div>
-                      {row !== "" && row === k.$id ? <div>{k.type}</div> : null}
+                      {row === k.$id ? <div>{k.type}</div> : null}
                       <button onClick={closeDrawer}>x</button>
+                      <Collapse in={row === k.$id} timeout="auto" unmountOnExit>
+                        <CardContent>
+                          <Typography paragraph>Sample Text</Typography>
+                        </CardContent>
+                      </Collapse>
                     </>
                   ))}
                 </div>
@@ -331,7 +336,7 @@ const Food = () => {
                     </CardActions>
                     <ExpandMore
                       expand={expanded}
-                      onClick={() => handleExpandClick(index)}
+                      onClick={handleExpandClick}
                       aria-expanded={expanded}
                       aria-label="show more"
                     >
