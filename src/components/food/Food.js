@@ -280,7 +280,7 @@ const Food = () => {
                                 ":" +
                                 (
                                   "0" +
-                                  (new Date(k.date).getMinutes() + 1)
+                                  (new Date(k.date).getMinutes())
                                 ).slice(-2)}
                             </Typography>
                             <ExpandMore
