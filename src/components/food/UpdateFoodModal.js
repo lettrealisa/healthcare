@@ -45,7 +45,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const UpdateFoodModal = ({ item, items, setItems, limit, offset }) => {
+const UpdateFoodModal = ({ item, limit, offset, setGroups }) => {
   const collectionId = "634db3dbd47db0cad25b";
 
   const [locale, setLocale] = useState("ru");
@@ -74,13 +74,15 @@ const UpdateFoodModal = ({ item, items, setItems, limit, offset }) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  
   const groupItemsByDate = (items, res) => {
     items.forEach((item) => {
       const date = item.date.split("T")[0];
       if (res[date]) res[date].push(item);
       else res[date] = [item];
-    })};
+    });
+
+    return res;
+  };
 
   const handleUpdate = async () => {
     await databases.updateDocument(
@@ -96,14 +98,15 @@ const UpdateFoodModal = ({ item, items, setItems, limit, offset }) => {
     );
 
     const getDocuments = async () => {
-      setItems(
-        await databases.listDocuments("633f24764b9416fbd058", collectionId, [
-          Query.orderAsc("date"),
-          Query.limit(limit),
-          Query.offset(offset),
-        ])
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        collectionId,
+        [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
+
+      setGroups(groupItemsByDate(res.documents, {}));
     };
+
     getDocuments();
   };
 
@@ -115,14 +118,15 @@ const UpdateFoodModal = ({ item, items, setItems, limit, offset }) => {
     );
 
     const getDocuments = async () => {
-      setItems(
-        await databases.listDocuments("633f24764b9416fbd058", collectionId, [
-          Query.orderAsc("date"),
-          Query.limit(limit),
-          Query.offset(offset),
-        ])
+      const res = await databases.listDocuments(
+        "633f24764b9416fbd058",
+        collectionId,
+        [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
+
+      setGroups(groupItemsByDate(res.documents, {}));
     };
+
     getDocuments();
   };
 

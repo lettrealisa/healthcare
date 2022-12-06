@@ -66,7 +66,7 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const CreateFoodModal = ({ title, imageList, volumes, setItems }) => {
+const CreateFoodModal = ({ volumes, setGroups, limit, offset }) => {
   const collectionId = "634db3dbd47db0cad25b";
 
   const [locale, setLocale] = useState("ru");
@@ -82,6 +82,16 @@ const CreateFoodModal = ({ title, imageList, volumes, setItems }) => {
   const [loaded, isLoaded] = useState(false);
 
   const [categories, setCategories] = useState([]);
+
+  const groupItemsByDate = (items, res) => {
+    items.forEach((item) => {
+      const date = item.date.split("T")[0];
+      if (res[date]) res[date].push(item);
+      else res[date] = [item];
+    });
+
+    return res;
+  };
 
   useEffect(() => {
     const getDocuments = async () => {
@@ -105,10 +115,6 @@ const CreateFoodModal = ({ title, imageList, volumes, setItems }) => {
 
   const [date, setDate] = useState(new Date());
   const [isFood, setIsFood] = useState(true);
-
-  const handleDate = (date) => {
-    setDate(date);
-  };
 
   const [values, setValues] = useState({
     date: new Date(),
@@ -146,10 +152,12 @@ const CreateFoodModal = ({ title, imageList, volumes, setItems }) => {
       const res = await databases.listDocuments(
         "633f24764b9416fbd058",
         collectionId,
-        [Query.orderAsc("date")]
+        [Query.orderAsc("date"), Query.limit(limit), Query.offset(offset)]
       );
-      setItems(res);
+
+      setGroups(groupItemsByDate(res.documents, {}));
     };
+
     getDocuments();
   };
   const hiddenFileInput = useRef();

@@ -92,10 +92,6 @@ const Food = () => {
       else res[date] = [item];
     });
 
-    console.log(res);
-    console.log("T");
-    Object.keys(res).map((key) => console.log(res[key][0]));
-
     return res;
   };
 
@@ -191,10 +187,10 @@ const Food = () => {
           >
             <h1>Дневник питания</h1>
             <CreateFoodModal
-              items={groups}
-              setItems={setGroups}
-              imageList={images}
               volumes={volumes}
+              setGroups={setGroups}
+              limit={limit}
+              offset={offset}
             />
           </Box>
 
@@ -325,10 +321,9 @@ const Food = () => {
                             <CardActions>
                               <UpdateFoodModal
                                 item={k}
-                                items={groups}
-                                setItems={setGroups}
                                 limit={limit}
                                 offset={offset}
+                                setGroups={setGroups}
                               />
                             </CardActions>
                           </CardContent>
@@ -338,7 +333,6 @@ const Food = () => {
                   </Card>
                 </Grid>
               ))}
-
             </Grid>
           </Box>
           <Pagination
