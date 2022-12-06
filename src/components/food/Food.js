@@ -85,10 +85,6 @@ const Food = () => {
     else setRow(id);
   };
 
-  const closeDrawer = () => {
-    setRow("");
-  };
-
   const groupItemsByDate = (items, res) => {
     items.forEach((item) => {
       const date = item.date.split("T")[0];
@@ -194,28 +190,9 @@ const Food = () => {
             alignItems="center"
           >
             <h1>Дневник питания</h1>
-            {Object.keys(groups).map((key) => (
-              <Box key={key}>
-                <div>{key}</div>
-                <div>
-                  {groups[key].map((k) => (
-                    <>
-                      <div onClick={() => handleRow(k.$id)}>{k.desc}</div>
-                      {row === k.$id ? <div>{k.type}</div> : null}
-                      <button onClick={closeDrawer}>x</button>
-                      <Collapse in={row === k.$id} timeout="auto" unmountOnExit>
-                        <CardContent>
-                          <Typography paragraph>Sample Text</Typography>
-                        </CardContent>
-                      </Collapse>
-                    </>
-                  ))}
-                </div>
-              </Box>
-            ))}
             <CreateFoodModal
-              items={items}
-              setItems={setItems}
+              items={groups}
+              setItems={setGroups}
               imageList={images}
               volumes={volumes}
             />
@@ -282,78 +259,90 @@ const Food = () => {
               spacing={{ xs: 2, md: 3 }}
               columns={{ xs: 4, sm: 8, md: 12 }}
             >
-              {items?.map((item, index) => (
-                <Grid item xs={2} sm={4} md={4} key={item.$id}>
+              {Object.keys(groups).map((key) => (
+                <Grid item xs={2} sm={4} md={4} key={key}>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardHeader
                       title={
-                        <Box display="flex" justifyContent="space-between">
+                        <Box display="flex" justifyContent="center">
                           <Typography>
-                            {("0" + new Date(item.date).getDate()).slice(-2) +
+                            {("0" + new Date(key).getDate()).slice(-2) +
                               "." +
-                              (
-                                "0" +
-                                (new Date(item.date).getMonth() + 1)
-                              ).slice(-2) +
+                              ("0" + (new Date(key).getMonth() + 1)).slice(-2) +
                               "." +
-                              new Date(item.date).getFullYear()}
-                          </Typography>
-                          <Typography>
-                            {new Date(item.date).getHours() +
-                              ":" +
-                              new Date(item.date).getMinutes()}
+                              new Date(key).getFullYear()}
                           </Typography>
                         </Box>
                       }
-                    ></CardHeader>
-                    <CardMedia
-                      component="img"
-                      height="194"
-                      image={storage.getFilePreview(
-                        "634db50ac1ab6fd9b602",
-                        item.image
-                      )}
                     />
-                    <CardContent>
-                      <Typography>
-                        <Chip label={item.type}></Chip>
-                      </Typography>
-                      <Typography>{item.desc}</Typography>
-                      <Typography>
-                        {item.value}
-                        &nbsp;
-                        {item.volume}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <UpdateFoodModal
-                        item={item}
-                        items={items}
-                        setItems={setItems}
-                        limit={limit}
-                        offset={offset}
-                      />
-                    </CardActions>
-                    <ExpandMore
-                      expand={expanded}
-                      onClick={handleExpandClick}
-                      aria-expanded={expanded}
-                      aria-label="show more"
-                    >
-                      <ExpandMoreIcon />
-                    </ExpandMore>
-                    <Collapse in={expanded} timeout="auto" unmountOnExit>
+                    {groups[key].map((k) => (
                       <CardContent>
-                        <Typography paragraph>Sample Text</Typography>
+                        <div onClick={() => handleRow(k.$id)}>
+                          <Box display="flex" justifyContent="space-between">
+                            <Typography>
+                              {("0" + new Date(k.date).getHours()).slice(-2) +
+                                ":" +
+                                (
+                                  "0" +
+                                  (new Date(k.date).getMinutes() + 1)
+                                ).slice(-2)}
+                            </Typography>
+                            <ExpandMore
+                              expand={expanded}
+                              onClick={() => handleRow(k.$id)}
+                              aria-expanded={expanded}
+                              aria-label="show more"
+                            >
+                              <ExpandMoreIcon />
+                            </ExpandMore>
+                          </Box>
+                        </div>
+                        <Collapse
+                          in={row === k.$id}
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <CardContent>
+                            <CardMedia
+                              component="img"
+                              height="194"
+                              image={storage.getFilePreview(
+                                "634db50ac1ab6fd9b602",
+                                k.image
+                              )}
+                            />
+                            <CardContent>
+                              <Typography>
+                                <Chip label={k.type}></Chip>
+                              </Typography>
+                              <Typography>{k.desc}</Typography>
+                              <Typography>
+                                {k.value}
+                                &nbsp;
+                                {k.volume}
+                              </Typography>
+                            </CardContent>
+                            <CardActions>
+                              <UpdateFoodModal
+                                item={k}
+                                items={groups}
+                                setItems={setGroups}
+                                limit={limit}
+                                offset={offset}
+                              />
+                            </CardActions>
+                          </CardContent>
+                        </Collapse>
                       </CardContent>
-                    </Collapse>
+                    ))}
                   </Card>
                 </Grid>
               ))}
+
             </Grid>
           </Box>
           <Pagination
-            count={items?.total > 1 ? Math.ceil(items?.total / limit) : 1}
+            count={groups?.total > 1 ? Math.ceil(groups?.total / limit) : 1}
             page={page}
             onChange={handlePage}
             size="large"

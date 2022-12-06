@@ -102,3 +102,7 @@ button {
   margin-right: 1rem;
   display: block;
 }
+
+.card {
+  box-shadow: 0 !important;
+}

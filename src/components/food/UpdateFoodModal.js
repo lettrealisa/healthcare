@@ -74,6 +74,14 @@ const UpdateFoodModal = ({ item, items, setItems, limit, offset }) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
+  
+  const groupItemsByDate = (items, res) => {
+    items.forEach((item) => {
+      const date = item.date.split("T")[0];
+      if (res[date]) res[date].push(item);
+      else res[date] = [item];
+    })};
+
   const handleUpdate = async () => {
     await databases.updateDocument(
       "633f24764b9416fbd058",
