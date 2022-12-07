@@ -258,7 +258,7 @@ const Food = () => {
                                 ("0" + new Date(k.date).getMinutes()).slice(-2)}
                             </Typography>
                             <ExpandMore
-                              expand={expanded}
+                              expand={row === k.$id}
                               onClick={() => handleRow(k.$id)}
                               aria-expanded={expanded}
                               aria-label="show more"
