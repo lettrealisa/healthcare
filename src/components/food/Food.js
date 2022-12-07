@@ -1,7 +1,6 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -20,8 +19,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import Paper from "@mui/material/Paper";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
@@ -36,26 +33,6 @@ import ResponsiveAppBar from "../common/ResponsiveAppBar";
 import useCategories from "../common/useCategories";
 import CreateFoodModal from "./CreateFoodModal";
 import UpdateFoodModal from "./UpdateFoodModal";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
-
-const CustomButton = styled(Button)(({ theme }) => ({
-  border: `1px solid ${grey[300]}`,
-  background: grey[300],
-  color: grey[700],
-  textTransform: "none",
-  font: "inherit",
-  padding: "0.5rem",
-  maxHeight: "50px",
-  "&:hover": {},
-  "&:disabled": {},
-}));
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -278,10 +255,7 @@ const Food = () => {
                             <Typography>
                               {("0" + new Date(k.date).getHours()).slice(-2) +
                                 ":" +
-                                (
-                                  "0" +
-                                  (new Date(k.date).getMinutes())
-                                ).slice(-2)}
+                                ("0" + new Date(k.date).getMinutes()).slice(-2)}
                             </Typography>
                             <ExpandMore
                               expand={expanded}
