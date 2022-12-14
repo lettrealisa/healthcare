@@ -119,7 +119,7 @@ export const FoodList = () => {
           {groupedItems[key].map((item) => {
             return (
               <CardContent>
-                <div onClick={() => handleRow(k.$id)}>
+                <div onClick={() => handleRow(item.$id)}>
                   <Box display="flex" justifyContent="space-between">
                     <Typography>
                       {("0" + new Date(item.date).getHours()).slice(-2) +
