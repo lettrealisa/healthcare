@@ -1,13 +1,8 @@
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Alcohol from "./components/alcohol/Alcohol.js";
-import RequireAuth from "./components/auth/RequireAuth";
-import SignIn from "./components/auth/SignIn";
-import { default as SignInV2 } from "./components/auth/signIn/SignIn";
-import Food from "./components/food/Food";
-import Glucose from "./components/glucose/Glucose";
-import Profile from "./components/profile/Profile";
+import Alcohol from "./features/alcohol/Alcohol";
+import { FoodList } from "./features/food/FoodList";
 
 const darkTheme = createTheme({
   palette: {
@@ -26,16 +21,8 @@ function App() {
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
       <Routes>
-        <Route path="/login" element={<SignIn />} />
-        <Route path="/signIn" element={<SignInV2 />} />
-        <Route path="/" element={<SignIn />}></Route>
-
-        <Route element={<RequireAuth />}>
-          <Route path="/food" element={<Food />}></Route>
-          <Route path="/profile" element={<Profile />}></Route>
-          <Route path="/alcohol" element={<Alcohol />}></Route>
-          <Route path="/glucose" element={<Glucose />}></Route>
-        </Route>
+        <Route path="/food" element={<FoodList />} />
+        <Route path="/alcohol" element={<Alcohol />} />
       </Routes>
     </ThemeProvider>
   );
