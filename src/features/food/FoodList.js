@@ -53,7 +53,7 @@ export const FoodList = () => {
     error,
   } = useGetFoodsQuery();
 
-  const groupItemsByDate = (items, res = []) => {
+  const groupItemsByDate = (items, res) => {
     items.forEach((item) => {
       const date = item.date.split("T")[0];
       if (res[date]) res[date].push(item);
@@ -66,7 +66,7 @@ export const FoodList = () => {
 
   const groupedItems = useMemo(() => {
     const groupedItems = foods.slice();
-    return groupItemsByDate(groupedItems);
+    return groupItemsByDate(groupedItems, {});
   }, [foods]);
 
   let content;
@@ -74,8 +74,12 @@ export const FoodList = () => {
   if (isLoading) {
     content = <CircularProgress />;
   } else if (isSuccess) {
-    content = groupedItems.map((food) => (
-      <FoodItem key={food.id} food={food} />
+    content = Object.keys(groupedItems).map((key) => (
+      <>
+        {groupedItems[key].map((item) => {
+          return <FoodItem key={key} food={item} />;
+        })}
+      </>
     ));
   } else if (isError) {
     content = <div>{error.data}</div>;
