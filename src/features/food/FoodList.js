@@ -331,7 +331,7 @@ export const FoodList = () => {
             </Grid>
           </Box>
           <Pagination
-            count={groups?.total > 1 ? Math.ceil(groups?.total / limit) : 1}
+            count={groupedItems?.total > 1 ? Math.ceil(groupedItems?.total / limit) : 1}
             page={page}
             onChange={handlePage}
             size="large"
