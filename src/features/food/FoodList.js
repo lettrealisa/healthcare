@@ -26,7 +26,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import "dayjs/locale/ru";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "../../common/Header";
 import { useGetFoodsQuery } from "../api/apiSlice";
 import CreateFoodModal from "./CreateFoodModal";
@@ -45,31 +45,38 @@ const ExpandMore = styled((props) => {
 }));
 
 export const FoodList = () => {
-  const groupItemsByDate = (items, res) => {
-    items.forEach((item) => {
-      const date = item.date.split("T")[0];
-      if (res[date]) res[date].push(item);
-      else res[date] = [item];
-    });
-
-    return res;
-  };
-  const [locale, setLocale] = useState("ru");
-
   const {
-    data: foods,
+    data: foods = [],
     isLoading,
     isSuccess,
     isError,
     error,
   } = useGetFoodsQuery();
 
+  const groupItemsByDate = (items, res = []) => {
+    items.forEach((item) => {
+      const date = item.date.split("T")[0];
+      if (res[date]) res[date].push(item);
+      else res[date] = [item];
+    });
+    return res;
+  };
+
+  const [locale, setLocale] = useState("ru");
+
+  const groupedItems = useMemo(() => {
+    const groupedItems = foods.slice();
+    return groupItemsByDate(groupedItems);
+  }, [foods]);
+
   let content;
 
   if (isLoading) {
     content = <CircularProgress />;
   } else if (isSuccess) {
-    content = foods.map((food) => <FoodItem food={food} />);
+    content = groupedItems.map((food) => (
+      <FoodItem key={food.id} food={food} />
+    ));
   } else if (isError) {
     content = <div>{error.data}</div>;
   }
