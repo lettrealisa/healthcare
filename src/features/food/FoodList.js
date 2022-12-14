@@ -30,7 +30,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Header } from "../../common/Header";
 import { useGetFoodsQuery } from "../api/apiSlice";
 import CreateFoodModal from "./CreateFoodModal";
-import { FoodItem } from "./FoodItem";
 import UpdateFoodModal from "./UpdateFoodModal";
 
 const ExpandMore = styled((props) => {
@@ -64,6 +63,33 @@ export const FoodList = () => {
 
   const [locale, setLocale] = useState("ru");
 
+  const [groups, setGroups] = useState({});
+
+  const [row, setRow] = useState("");
+
+  const handleRow = (id) => {
+    if (row === id) setRow("");
+    else setRow(id);
+  };
+
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  const [limit, setLimit] = useState(9);
+  const [offset, setOffset] = useState(0);
+
+  const [page, setPage] = useState(1);
+  const handlePage = (e, value) => {
+    setPage(value);
+  };
+
+  useEffect(() => {
+    setOffset((page - 1) * limit);
+  }, [page]);
+
   const groupedItems = useMemo(() => {
     const groupedItems = foods.slice();
     return groupItemsByDate(groupedItems, {});
@@ -76,51 +102,83 @@ export const FoodList = () => {
   } else if (isSuccess) {
     content = Object.keys(groupedItems).map((key) => (
       <>
-        {groupedItems[key].map((item) => {
-          return <FoodItem key={key} food={item} />;
-        })}
+        <Card sx={{ maxWidth: 345 }}>
+          <CardHeader
+            title={
+              <Box display="flex" justifyContent="center">
+                <Typography>
+                  {("0" + new Date(key).getDate()).slice(-2) +
+                    "." +
+                    ("0" + (new Date(key).getMonth() + 1)).slice(-2) +
+                    "." +
+                    new Date(key).getFullYear()}
+                </Typography>
+              </Box>
+            }
+          />
+          {groupedItems[key].map((item) => {
+            return (
+              <CardContent>
+                <div onClick={() => handleRow(k.$id)}>
+                  <Box display="flex" justifyContent="space-between">
+                    <Typography>
+                      {("0" + new Date(item.date).getHours()).slice(-2) +
+                        ":" +
+                        ("0" + new Date(item.date).getMinutes()).slice(-2)}
+                    </Typography>
+                    <ExpandMore
+                      expand={row === item.$id}
+                      onClick={() => handleRow(item.$id)}
+                      aria-expanded={expanded}
+                      aria-label="show more"
+                    >
+                      <ExpandMoreIcon />
+                    </ExpandMore>
+                  </Box>
+                </div>
+                <Collapse in={row === item.$id} timeout="auto" unmountOnExit>
+                  <CardContent>
+                    <CardMedia component="img" height="194" />
+                    <CardContent>
+                      <Typography>
+                        <Chip label={item.type}></Chip>
+                      </Typography>
+                      <Typography>{item.desc}</Typography>
+                      <Typography>
+                        {item.value}
+                        &nbsp;
+                        {item.volume}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <UpdateFoodModal
+                        item={item}
+                        limit={limit}
+                        offset={offset}
+                        setGroups={setGroups}
+                      />
+                    </CardActions>
+                  </CardContent>
+                </Collapse>
+              </CardContent>
+            );
+          })}
+        </Card>
       </>
     ));
   } else if (isError) {
     content = <div>{error.data}</div>;
   }
 
-  const [expanded, setExpanded] = useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
   const [date, setDate] = useState(new Date());
-
-  const [row, setRow] = useState("");
-
-  const handleRow = (id) => {
-    if (row === id) setRow("");
-    else setRow(id);
-  };
 
   useEffect(() => {
     console.log(content);
   }, [content]);
 
-  const [page, setPage] = useState(1);
-  const handlePage = (e, value) => {
-    setPage(value);
-  };
-
   const categories = [{ name: "Category" }];
 
-  const [limit, setLimit] = useState(9);
-  const [offset, setOffset] = useState(0);
-
-  useEffect(() => {
-    setOffset((page - 1) * limit);
-  }, [page]);
-
   const [volumes, setVolumes] = useState([]);
-
-  const [groups, setGroups] = useState({});
 
   return (
     <>
