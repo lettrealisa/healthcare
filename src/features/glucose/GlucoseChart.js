@@ -61,7 +61,7 @@ const month = 8;
 const day = 11;
 const week = 3;
 
-const GlucoseChart = ({ byMonth }) => {
+const GlucoseChart = ({ date, byMonth }) => {
   const {
     data: glucoseData = [],
     isLoading,
@@ -73,14 +73,28 @@ const GlucoseChart = ({ byMonth }) => {
   const [chartData, setChartData] = useState([]);
   const [labels, setLabels] = useState([]);
 
-  const handleWeek = (date) => {
-    function getWeekOfMonth() {
-      var adjustedDate = date.getDate() + 7;
-      var prefixes = ["0", "1", "2", "3", "4", "5"];
-      return prefixes[0 | (adjustedDate / 7)];
+  const handleDate = (prop) => {
+    let res;
+    switch (prop) {
+      case "year":
+        res = new Date(date).getFullYear();
+        break;
+      case "month":
+        res = new Date(date).getMonth() + 1;
+        break;
+      case "day":
+        res = new Date(date).getDate();
+        break;
+      case "week":
+        const getWeekOfMonth = () => {
+          var adjustedDate = date.getDate() + 7;
+          var prefixes = ["0", "1", "2", "3", "4", "5"];
+          return prefixes[0 | (adjustedDate / 7)];
+        };
+        res = parseInt(getWeekOfMonth());
+        break;
     }
-    const res = getWeekOfMonth();
-    return parseInt(res);
+    return res;
   };
 
   useEffect(() => {
@@ -91,9 +105,9 @@ const GlucoseChart = ({ byMonth }) => {
           filteredItems
             .filter(
               (t) =>
-                new Date(t.date).getFullYear() === year &&
+                new Date(t.date).getFullYear() === handleDate("year") &&
                 new Date(t.date).getMonth() + 1 === month &&
-                handleWeek(new Date(t.date)) === week
+                handleDate("week") === week
             )
             .map(
               (d) =>
@@ -124,7 +138,7 @@ const GlucoseChart = ({ byMonth }) => {
       setChartData(filteredItems.map((d) => d.value));
     };
     filteredItems();
-  }, [glucoseData, byMonth]);
+  }, [glucoseData, byMonth, date]);
 
   const data = {
     labels,
