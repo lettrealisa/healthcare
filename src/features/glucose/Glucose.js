@@ -2,14 +2,16 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
 } from "@mui/material";
 import { pink } from "@mui/material/colors";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import { Box, Container } from "@mui/system";
+import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import "dayjs/locale/ru";
 import { useState } from "react";
@@ -32,6 +34,14 @@ const Glucose = () => {
     setByMonth((prev) => !prev);
   };
 
+  const weeks = [1, 2, 3, 4];
+
+  const [week, setWeek] = useState(1);
+
+  const handleWeekChange = (e) => {
+    setWeek(e.target.value);
+  };
+
   return (
     <>
       <Header />
@@ -44,48 +54,56 @@ const Glucose = () => {
           >
             <h1>Глюкоза</h1>
           </Box>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 4, sm: 8, md: 12 }}
+
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
           >
-            <Grid item xs={2} sm={4} md={4}>
-              <Box
-                maxWidth={345}
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
+            <FormControl
+              fullWidth
+              variant="standard"
+              sx={{ marginRight: "1rem" }}
+            >
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale={locale}
               >
-                <FormControl
-                  fullWidth
-                  variant="standard"
-                  sx={{ marginRight: "1rem" }}
-                >
-                  <LocalizationProvider
-                    dateAdapter={AdapterDayjs}
-                    adapterLocale={locale}
-                  >
-                    <DateTimePicker
-                      value={date}
-                      onChange={(newDate) => setDate(newDate)}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </FormControl>
-                <FormControlLabel
-                  control={
-                    <ColorCheckbox
-                      id="byMonth"
-                      value={byMonth}
-                      onChange={toggleByMonth}
-                    />
-                  }
-                  label="Месяц"
+                <DatePicker
+                  value={date}
+                  onChange={(newDate) => setDate(newDate)}
+                  renderInput={(params) => <TextField {...params} />}
                 />
-              </Box>
-            </Grid>
-          </Grid>
-          <GlucoseChart date={date} byMonth={byMonth} />
+              </LocalizationProvider>
+            </FormControl>
+            <FormControlLabel
+              fullWidth
+              control={
+                <ColorCheckbox
+                  id="byMonth"
+                  value={byMonth}
+                  onChange={toggleByMonth}
+                />
+              }
+              label="Месяц"
+            />
+            <FormControl fullWidth>
+              <InputLabel htmlFor="select">Неделя</InputLabel>
+              <Select
+                labelId="select"
+                id="select"
+                value={week}
+                onChange={handleWeekChange}
+                label="Неделя"
+              >
+                {weeks.map((week) => (
+                  <MenuItem value={week}>{week}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+
+          <GlucoseChart date={date} byMonth={byMonth} week={week}/>
         </Box>
       </Container>
     </>

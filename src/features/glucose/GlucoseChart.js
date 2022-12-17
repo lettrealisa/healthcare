@@ -61,19 +61,13 @@ const month = 8;
 const day = 11;
 const week = 3;
 
-const GlucoseChart = ({ date, byMonth }) => {
-  const {
-    data: glucoseData = [],
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-  } = useGetGlucoseQuery();
+const GlucoseChart = ({ date, byMonth, week }) => {
+  const { data: glucoseData = [] } = useGetGlucoseQuery();
 
   const [chartData, setChartData] = useState([]);
   const [labels, setLabels] = useState([]);
 
-  const handleDate = (prop) => {
+  const handleDate = (prop, date) => {
     let res;
     switch (prop) {
       case "year":
@@ -87,7 +81,7 @@ const GlucoseChart = ({ date, byMonth }) => {
         break;
       case "week":
         const getWeekOfMonth = () => {
-          var adjustedDate = date.getDate() + 7;
+          var adjustedDate = new Date(date).getDate() + 7;
           var prefixes = ["0", "1", "2", "3", "4", "5"];
           return prefixes[0 | (adjustedDate / 7)];
         };
@@ -105,9 +99,9 @@ const GlucoseChart = ({ date, byMonth }) => {
           filteredItems
             .filter(
               (t) =>
-                new Date(t.date).getFullYear() === handleDate("year") &&
-                new Date(t.date).getMonth() + 1 === month &&
-                handleDate("week") === week
+                handleDate("year", t.date) === handleDate("year", date) &&
+                handleDate("month", t.date) === handleDate("month", date) &&
+                handleDate("week", t.date) === week
             )
             .map(
               (d) =>
@@ -123,9 +117,9 @@ const GlucoseChart = ({ date, byMonth }) => {
           filteredItems
             .filter(
               (t) =>
-                new Date(t.date).getFullYear() === year &&
-                new Date(t.date).getMonth() + 1 === month &&
-                new Date(t.date).getDate() === day
+                handleDate("year", t.date) === handleDate("year", date) &&
+                handleDate("month", t.date) === handleDate("month", date) &&
+                handleDate("day", t.date) === handleDate("day", date)
             )
             .map(
               (d) =>
@@ -138,7 +132,7 @@ const GlucoseChart = ({ date, byMonth }) => {
       setChartData(filteredItems.map((d) => d.value));
     };
     filteredItems();
-  }, [glucoseData, byMonth, date]);
+  }, [glucoseData, byMonth, date, week]);
 
   const data = {
     labels,
