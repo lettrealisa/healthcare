@@ -87,6 +87,12 @@ const GlucoseChart = ({ date, byMonth, week }) => {
         };
         res = parseInt(getWeekOfMonth());
         break;
+      case "hours":
+        res = new Date(date).getHours();
+        break;
+      case "minutes":
+        res = new Date(date).getMinutes();
+        break;
     }
     return res;
   };
@@ -105,11 +111,11 @@ const GlucoseChart = ({ date, byMonth, week }) => {
             )
             .map(
               (d) =>
-                ("0" + new Date(d.date).getDate()).slice(-2) +
+                ("0" + handleDate("day", d.date)).slice(-2) +
                 "." +
-                ("0" + (new Date(d.date).getMonth() + 1)).slice(-2) +
+                ("0" + handleDate("month", d.date)).slice(-2) +
                 "." +
-                new Date(d.date).getFullYear()
+                handleDate("year", d.date)
             )
         );
       } else {
@@ -123,9 +129,9 @@ const GlucoseChart = ({ date, byMonth, week }) => {
             )
             .map(
               (d) =>
-                ("0" + new Date(d.date).getHours()).slice(-2) +
+                ("0" + handleDate("hours", d.date)).slice(-2) +
                 ":" +
-                ("0" + new Date(d.date).getMinutes()).slice(-2)
+                ("0" + handleDate("minutes", d.date)).slice(-2)
             )
         );
       }
