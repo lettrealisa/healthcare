@@ -1,4 +1,4 @@
-import { React, useEffect, useMemo, useState } from "react";
+import { React, useEffect, useState } from "react";
 
 import {
   CategoryScale,
@@ -56,10 +56,10 @@ export const options = {
 Chart.defaults.font.family = "Montserrat, sans-serif";
 Chart.defaults.font.size = 16;
 
-const year = 1;
-const month = 1;
-const day = 1;
-const week = 1;
+const year = 2022;
+const month = 8;
+const day = 11;
+const week = 3;
 
 const GlucoseChart = ({ byMonth }) => {
   const {
@@ -70,12 +70,8 @@ const GlucoseChart = ({ byMonth }) => {
     error,
   } = useGetGlucoseQuery();
 
-  let content;
-
-  const filteredItems = useMemo(() => {
-    const filteredItems = glucoseData.slice();
-    //return filterItemsByDate(filteredItems, {});
-  }, [glucoseData]);
+  const [chartData, setChartData] = useState([]);
+  const [labels, setLabels] = useState([]);
 
   const handleWeek = (date) => {
     function getWeekOfMonth() {
@@ -87,41 +83,48 @@ const GlucoseChart = ({ byMonth }) => {
     return parseInt(res);
   };
 
-  const [chartData, setChartData] = useState([]);
-  const [labels, setLabels] = useState([]);
-
-  const getData = () => {
-    const handleLabels = () => {
+  useEffect(() => {
+    const filteredItems = () => {
+      const filteredItems = glucoseData.slice();
       if (byMonth) {
         setLabels(
-          glucoseData.map(
-            (d) =>
-              ("0" + new Date(d.date).getDate()).slice(-2) +
-              "." +
-              ("0" + (new Date(d.date).getMonth() + 1)).slice(-2) +
-              "." +
-              new Date(d.date).getFullYear()
-          )
+          filteredItems
+            .filter(
+              (t) =>
+                new Date(t.date).getFullYear() === year &&
+                new Date(t.date).getMonth() + 1 === month &&
+                handleWeek(new Date(t.date)) === week
+            )
+            .map(
+              (d) =>
+                ("0" + new Date(d.date).getDate()).slice(-2) +
+                "." +
+                ("0" + (new Date(d.date).getMonth() + 1)).slice(-2) +
+                "." +
+                new Date(d.date).getFullYear()
+            )
         );
       } else {
         setLabels(
-          glucoseData.map(
-            (d) =>
-              ("0" + new Date(d.date).getHours()).slice(-2) +
-              ":" +
-              ("0" + new Date(d.date).getMinutes()).slice(-2)
-          )
+          filteredItems
+            .filter(
+              (t) =>
+                new Date(t.date).getFullYear() === year &&
+                new Date(t.date).getMonth() + 1 === month &&
+                new Date(t.date).getDate() === day
+            )
+            .map(
+              (d) =>
+                ("0" + new Date(d.date).getHours()).slice(-2) +
+                ":" +
+                ("0" + new Date(d.date).getMinutes()).slice(-2)
+            )
         );
       }
+      setChartData(filteredItems.map((d) => d.value));
     };
-    handleLabels();
-
-    setChartData(glucoseData.map((d) => d.value));
-  };
-
-  useEffect(() => {
-    getData();
-  }, [byMonth]);
+    filteredItems();
+  }, [glucoseData, byMonth]);
 
   const data = {
     labels,
