@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useMemo, useState } from "react";
 
 import {
   CategoryScale,
@@ -22,6 +22,8 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+import { useGetGlucoseQuery } from "../api/apiSlice";
 
 export const options = {
   responsive: true,
@@ -59,8 +61,21 @@ const month = 1;
 const day = 1;
 const week = 1;
 
-const GlucoseChart = ({ date, byMonth }) => {
-  const collectionId = "634dee997a4f62abf628";
+const GlucoseChart = ({ byMonth }) => {
+  const {
+    data: glucoseData = [],
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetGlucoseQuery();
+
+  let content;
+
+  const filteredItems = useMemo(() => {
+    const filteredItems = glucoseData.slice();
+    //return filterItemsByDate(filteredItems, {});
+  }, [glucoseData]);
 
   const handleWeek = (date) => {
     function getWeekOfMonth() {
@@ -74,62 +89,37 @@ const GlucoseChart = ({ date, byMonth }) => {
 
   const [chartData, setChartData] = useState([]);
   const [labels, setLabels] = useState([]);
-  useEffect(() => {
-    const getData = async () => {
-      const res = await databases.listDocuments(
-        "633f24764b9416fbd058",
-        collectionId
-      );
 
-      const docs = res.documents;
-
-      console.log(
-        ("0" + new Date(docs[0].date).getHours()).slice(-2) +
-          ":" +
-          ("0" + new Date(docs[0].date).getMinutes()).slice(-2)
-      );
-
-      const handleLabels = () => {
-        if (byMonth) {
-          setLabels(
-            docs
-              .filter(
-                (t) =>
-                  new Date(t.date).getFullYear() === year &&
-                  new Date(t.date).getMonth() + 1 === month &&
-                  handleWeek(new Date(t.date)) === week
-              )
-              .map(
-                (d) =>
-                  ("0" + new Date(d.date).getDate()).slice(-2) +
-                  "." +
-                  ("0" + (new Date(d.date).getMonth() + 1)).slice(-2) +
-                  "." +
-                  new Date(d.date).getFullYear()
-              )
-          );
-        } else {
-          setLabels(
-            docs
-              .filter(
-                (t) =>
-                  new Date(t.date).getFullYear() === year &&
-                  new Date(t.date).getMonth() + 1 === month &&
-                  new Date(t.date).getDate() === day
-              )
-              .map(
-                (d) =>
-                  ("0" + new Date(d.date).getHours()).slice(-2) +
-                  ":" +
-                  ("0" + new Date(d.date).getMinutes()).slice(-2)
-              )
-          );
-        }
-      };
-      handleLabels();
-
-      setChartData(docs.map((d) => d.value));
+  const getData = () => {
+    const handleLabels = () => {
+      if (byMonth) {
+        setLabels(
+          glucoseData.map(
+            (d) =>
+              ("0" + new Date(d.date).getDate()).slice(-2) +
+              "." +
+              ("0" + (new Date(d.date).getMonth() + 1)).slice(-2) +
+              "." +
+              new Date(d.date).getFullYear()
+          )
+        );
+      } else {
+        setLabels(
+          glucoseData.map(
+            (d) =>
+              ("0" + new Date(d.date).getHours()).slice(-2) +
+              ":" +
+              ("0" + new Date(d.date).getMinutes()).slice(-2)
+          )
+        );
+      }
     };
+    handleLabels();
+
+    setChartData(glucoseData.map((d) => d.value));
+  };
+
+  useEffect(() => {
     getData();
   }, [byMonth]);
 

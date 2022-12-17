@@ -9,7 +9,10 @@ export const apiSlice = createApi({
     getAlcohol: builder.query({
       query: () => "/alcohol",
     }),
+    getGlucose: builder.query({
+      query: () => "/glucose",
+    }),
   }),
 });
 
-export const { useGetFoodsQuery, useGetAlcoholQuery } = apiSlice;
+export const { useGetFoodsQuery, useGetAlcoholQuery, useGetGlucoseQuery } = apiSlice;

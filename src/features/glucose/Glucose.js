@@ -13,6 +13,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import "dayjs/locale/ru";
 import { useState } from "react";
+import { Header } from "../../common/Header";
 import GlucoseChart from "./GlucoseChart";
 
 const ColorCheckbox = styled(Checkbox)(({ theme }) => ({
@@ -33,7 +34,7 @@ const Glucose = () => {
 
   return (
     <>
-      <ResponsiveAppBar />
+      <Header />
       <Container>
         <Box display="grid" gap={{ xs: 1, md: 2 }} mt={4} mb={4}>
           <Box
@@ -43,7 +44,6 @@ const Glucose = () => {
           >
             <h1>Глюкоза</h1>
           </Box>
-
           <Grid
             container
             spacing={{ xs: 2, md: 3 }}
@@ -85,7 +85,6 @@ const Glucose = () => {
               </Box>
             </Grid>
           </Grid>
-
           <GlucoseChart date={date} byMonth={byMonth} />
         </Box>
       </Container>
