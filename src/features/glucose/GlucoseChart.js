@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useMemo, useState } from "react";
 
 import {
   CategoryScale,
@@ -56,11 +56,6 @@ export const options = {
 Chart.defaults.font.family = "Montserrat, sans-serif";
 Chart.defaults.font.size = 16;
 
-const year = 2022;
-const month = 8;
-const day = 11;
-const week = 3;
-
 const GlucoseChart = ({ date, byMonth, week }) => {
   const { data: glucoseData = [] } = useGetGlucoseQuery();
 
@@ -97,12 +92,17 @@ const GlucoseChart = ({ date, byMonth, week }) => {
     return res;
   };
 
+  const items = useMemo(() => {
+    const items = glucoseData.slice();
+    return items;
+  }, [glucoseData]);
+
   useEffect(() => {
     const filteredItems = () => {
-      const filteredItems = glucoseData.slice();
+      //const filteredItems = glucoseData.slice();
       if (byMonth) {
         setLabels(
-          filteredItems
+          items
             .filter(
               (t) =>
                 handleDate("year", t.date) === handleDate("year", date) &&
@@ -120,7 +120,7 @@ const GlucoseChart = ({ date, byMonth, week }) => {
         );
       } else {
         setLabels(
-          filteredItems
+          items
             .filter(
               (t) =>
                 handleDate("year", t.date) === handleDate("year", date) &&
@@ -135,10 +135,10 @@ const GlucoseChart = ({ date, byMonth, week }) => {
             )
         );
       }
-      setChartData(filteredItems.map((d) => d.value));
+      setChartData(items.map((d) => d.value));
     };
     filteredItems();
-  }, [glucoseData, byMonth, date, week]);
+  }, [items, byMonth, date, week]);
 
   const data = {
     labels,

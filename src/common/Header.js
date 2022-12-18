@@ -115,7 +115,7 @@ export const Header = () => {
             HEALTHCARE
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            <Link to="/foods" element={<FoodList />} className="link">
+            <Link to="/food" element={<FoodList />} className="link">
               Дневник&nbsp;питания
             </Link>
             <Link to="/alcohol" element={<Alcohol />} className="link">
