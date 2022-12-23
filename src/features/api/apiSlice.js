@@ -1,7 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const apiSlice = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:8080",
+    /*prepareHeaders: (headers, { getState }) => {
+      const token = getState().auth.token;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },*/
+  }),
   endpoints: (builder) => ({
     getFoods: builder.query({
       query: () => "/foods",
@@ -12,7 +23,15 @@ export const apiSlice = createApi({
     getGlucose: builder.query({
       query: () => "/glucose",
     }),
+    login: builder.mutation({
+      query: (body) => ({ url: "/login", method: "POST", body: body }),
+    }),
   }),
 });
 
-export const { useGetFoodsQuery, useGetAlcoholQuery, useGetGlucoseQuery } = apiSlice;
+export const {
+  useGetFoodsQuery,
+  useGetAlcoholQuery,
+  useGetGlucoseQuery,
+  useLoginMutation,
+} = apiSlice;

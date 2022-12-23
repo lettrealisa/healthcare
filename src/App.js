@@ -6,6 +6,7 @@ import Alcohol from "./features/alcohol/Alcohol";
 import SignIn from "./features/auth/SignIn";
 import { FoodList } from "./features/food/FoodList";
 import Glucose from "./features/glucose/Glucose";
+import ProtectedRoute from "./features/router/ProtectedRoute";
 
 const darkTheme = createTheme({
   palette: {
@@ -24,6 +25,9 @@ function App() {
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
       <Routes>
+        <Route
+          element={<ProtectedRoute redirectPath="/home"></ProtectedRoute>}
+        />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/signIn" element={<SignIn />} />
         <Route path="/food" element={<FoodList />} />

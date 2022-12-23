@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../../common/CustomButton";
 import { CustomCheckbox } from "../../common/CustomCheckbox";
 import { CustomTextField } from "../../common/CustomTextField";
+import { useLoginMutation } from "../api/apiSlice";
 
 function Copyright(props) {
   return (
@@ -70,6 +71,33 @@ export default function SignIn() {
     event.preventDefault();
   };
 
+  const [login, { isLoading }] = useLoginMutation();
+
+  const canSave = /*[email, password].every(Boolean) && */ !isLoading;
+
+  const onSignInClicked = async (e) => {
+    e.preventDefault();
+    if (canSave) {
+      try {
+        const res = await login({
+          name: "Test",
+          age: 45,
+          job: "test",
+          pet: "test",
+          date: "2022-12-06T12:32",
+          role: {
+            name: "doctor",
+          },
+        }).unwrap();
+        //setEmail("");
+        //setPassword("");
+        console.log(res.token);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
@@ -107,12 +135,16 @@ export default function SignIn() {
             <Typography component="h1" variant="h5">
               Вход
             </Typography>
-            <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
+            <Box
+              component="form"
+              onSubmit={(e) => onSignInClicked(e)}
+              sx={{ mt: 1 }}
+            >
               <FormControl variant="outlined" fullWidth>
                 <CustomTextField type="email" id="email" label="Email" />
               </FormControl>
               <FormControl variant="outlined" fullWidth sx={{ mt: 1 }}>
-                <CustomTextField id="password" label="Пароль" />
+                <CustomTextField id="password" label="Пароль" type="password" />
               </FormControl>
               <FormControlLabel
                 control={<CustomCheckbox value="remember" color="primary" />}
