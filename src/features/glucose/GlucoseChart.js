@@ -57,7 +57,7 @@ Chart.defaults.font.family = "Montserrat, sans-serif";
 Chart.defaults.font.size = 16;
 
 const GlucoseChart = ({ date, byMonth, week }) => {
-  const { data: glucoseData = [] } = useGetGlucoseQuery();
+  const { data: glucoseData = [], isLoading } = useGetGlucoseQuery();
 
   const [chartData, setChartData] = useState([]);
   const [labels, setLabels] = useState([]);
@@ -93,49 +93,52 @@ const GlucoseChart = ({ date, byMonth, week }) => {
   };
 
   const items = useMemo(() => {
-    const items = glucoseData.slice();
-    return items;
+    if (!isLoading) {
+      const items = glucoseData.slice();
+      return items;
+    }
   }, [glucoseData]);
 
   useEffect(() => {
     const filteredItems = () => {
-      //const filteredItems = glucoseData.slice();
-      if (byMonth) {
-        setLabels(
-          items
-            .filter(
-              (t) =>
-                handleDate("year", t.date) === handleDate("year", date) &&
-                handleDate("month", t.date) === handleDate("month", date) &&
-                handleDate("week", t.date) === week
-            )
-            .map(
-              (d) =>
-                ("0" + handleDate("day", d.date)).slice(-2) +
-                "." +
-                ("0" + handleDate("month", d.date)).slice(-2) +
-                "." +
-                handleDate("year", d.date)
-            )
-        );
-      } else {
-        setLabels(
-          items
-            .filter(
-              (t) =>
-                handleDate("year", t.date) === handleDate("year", date) &&
-                handleDate("month", t.date) === handleDate("month", date) &&
-                handleDate("day", t.date) === handleDate("day", date)
-            )
-            .map(
-              (d) =>
-                ("0" + handleDate("hours", d.date)).slice(-2) +
-                ":" +
-                ("0" + handleDate("minutes", d.date)).slice(-2)
-            )
-        );
+      if (items !== undefined) {
+        if (byMonth) {
+          setLabels(
+            items
+              .filter(
+                (t) =>
+                  handleDate("year", t.date) === handleDate("year", date) &&
+                  handleDate("month", t.date) === handleDate("month", date) &&
+                  handleDate("week", t.date) === week
+              )
+              .map(
+                (d) =>
+                  ("0" + handleDate("day", d.date)).slice(-2) +
+                  "." +
+                  ("0" + handleDate("month", d.date)).slice(-2) +
+                  "." +
+                  handleDate("year", d.date)
+              )
+          );
+        } else {
+          setLabels(
+            items
+              .filter(
+                (t) =>
+                  handleDate("year", t.date) === handleDate("year", date) &&
+                  handleDate("month", t.date) === handleDate("month", date) &&
+                  handleDate("day", t.date) === handleDate("day", date)
+              )
+              .map(
+                (d) =>
+                  ("0" + handleDate("hours", d.date)).slice(-2) +
+                  ":" +
+                  ("0" + handleDate("minutes", d.date)).slice(-2)
+              )
+          );
+        }
+        setChartData(items.map((d) => d.value));
       }
-      setChartData(items.map((d) => d.value));
     };
     filteredItems();
   }, [items, byMonth, date, week]);

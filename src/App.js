@@ -23,7 +23,7 @@ const lightTheme = createTheme({
 
 function App() {
   const {
-    data: token,
+    data: auth,
     isLoading,
     isSuccess,
     isError,
