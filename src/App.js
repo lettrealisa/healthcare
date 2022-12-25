@@ -1,6 +1,7 @@
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import store from "./app/store";
 import Dashboard from "./features/admin/Dashboard";
 import Alcohol from "./features/alcohol/Alcohol";
 import { useLoginMutation } from "./features/api/apiSlice";
@@ -34,15 +35,15 @@ function App() {
       <CssBaseline />
       <Routes>
         <Route
+          path="/food"
           element={
-            <ProtectedRoute redirectPath="/home" >
-              <Route path="/food" element={<FoodList />} />
+            <ProtectedRoute isAllowed={1 === 1 || store.getState().auth.user}>
+              <FoodList />
             </ProtectedRoute>
           }
         />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/signIn" element={<SignIn />} />
-
         <Route path="/alcohol" element={<Alcohol />} />
         <Route path="/glucose" element={<Glucose />} />
       </Routes>

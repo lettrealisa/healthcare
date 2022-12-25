@@ -1,18 +1,17 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import authSlice from "../auth/authSlice";
 
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:8080",
-    prepareHeaders: (headers, { getState }) => {
-      const token = authSlice.token;
+    /*prepareHeaders: (headers) => {
+      const token = store.getState().auth;
 
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
 
       return headers;
-    },
+    },*/
   }),
   endpoints: (builder) => ({
     getFoods: builder.query({
