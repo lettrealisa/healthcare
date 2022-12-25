@@ -10,11 +10,13 @@ import Paper from "@mui/material/Paper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../../common/CustomButton";
 import { CustomCheckbox } from "../../common/CustomCheckbox";
 import { CustomTextField } from "../../common/CustomTextField";
 import { useLoginMutation } from "../api/apiSlice";
+import { setCredentials } from "./authSlice";
 
 function Copyright(props) {
   return (
@@ -33,6 +35,7 @@ const theme = createTheme();
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -91,7 +94,8 @@ export default function SignIn() {
         }).unwrap();
         //setEmail("");
         //setPassword("");
-        console.log(res.token);
+        dispatch(setCredentials(res));
+        console.log(res);
       } catch (err) {
         console.error(err);
       }
