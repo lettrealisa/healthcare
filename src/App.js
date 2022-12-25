@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./features/admin/Dashboard";
 import Alcohol from "./features/alcohol/Alcohol";
+import { useLoginMutation } from "./features/api/apiSlice";
 import SignIn from "./features/auth/SignIn";
 import { FoodList } from "./features/food/FoodList";
 import Glucose from "./features/glucose/Glucose";
@@ -21,16 +22,27 @@ const lightTheme = createTheme({
 });
 
 function App() {
+  const {
+    data: token,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useLoginMutation();
   return (
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
       <Routes>
         <Route
-          element={<ProtectedRoute redirectPath="/home"></ProtectedRoute>}
+          element={
+            <ProtectedRoute redirectPath="/home" >
+              <Route path="/food" element={<FoodList />} />
+            </ProtectedRoute>
+          }
         />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/signIn" element={<SignIn />} />
-        <Route path="/food" element={<FoodList />} />
+
         <Route path="/alcohol" element={<Alcohol />} />
         <Route path="/glucose" element={<Glucose />} />
       </Routes>

@@ -97,7 +97,7 @@ function DashboardContent() {
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: "24px"
+              pr: "24px",
             }}
           >
             <IconButton
