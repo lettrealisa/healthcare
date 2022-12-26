@@ -1,18 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { setCredentials } from "../auth/authSlice";
+
+const baseQuery = fetchBaseQuery({ baseUrl: "http://localhost:8080" });
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions);
+  if (result.error && result.error.status === 401) {
+    const refreshResult = await baseQuery("/refreshToken", api, extraOptions);
+    if (refreshResult.data) {
+      api.dispatch(setCredentials(refreshResult.data));
+      result = await baseQuery(args, api, extraOptions);
+    } else {
+      //api.dispatch(loggedOut())
+      console.log("Logged out");
+    }
+  }
+  return result;
+};
 
 export const apiSlice = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080",
-    /*prepareHeaders: (headers) => {
-      const token = store.getState().auth;
-
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-
-      return headers;
-    },*/
-  }),
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     getFoods: builder.query({
       query: () => "/foods",
